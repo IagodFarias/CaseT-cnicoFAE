@@ -37,7 +37,11 @@ public class TcpClient implements AutoCloseable {
     /** Serializa o ciclo escrita-resposta. Torna o cliente seguro para uso multi-thread. */
     private final ReentrantLock socketLock = new ReentrantLock();
 
-    private Socket socket;
+    /**
+     * Volatile porque e lido fora do lock: por isConnected() e por
+     * {@link #derrubarConexao()}, que precisa enxergar o socket publicado por outra thread.
+     */
+    private volatile Socket socket;
     private BufferedReader in;
     private BufferedWriter out;
 
@@ -145,6 +149,28 @@ public class TcpClient implements AutoCloseable {
 
     public String endereco() {
         return host + ":" + port;
+    }
+
+    /**
+     * Fecha o socket imediatamente, SEM adquirir o lock.
+     *
+     * Serve para provocar uma falha de rede real a partir de outra thread — usado pelo
+     * recurso de simulacao de queda da GUI, que precisa exercitar o tratamento de excecao
+     * de verdade em vez de exibir um erro ficticio.
+     *
+     * A ausencia do lock e deliberada e essencial. Quando a thread do ensaio esta
+     * bloqueada em readLine(), ela esta segurando o socketLock; se este metodo tentasse
+     * adquiri-lo, ficaria preso ate a leitura terminar — exatamente o que se quer
+     * interromper — e travaria a thread que o chamou (na GUI, a Application Thread).
+     * Fechar o socket de outra thread e justamente a forma canonica de desbloquear uma
+     * leitura pendente: o readLine() em curso falha com SocketException e as chamadas
+     * seguintes encontram o socket fechado.
+     *
+     * Nao mexe em 'in'/'out' nem anula 'socket': quem faz a limpeza ordenada continua
+     * sendo {@link #close()}, chamado pelo try-with-resources do servico.
+     */
+    public void derrubarConexao() {
+        fecharSilenciosamente(this.socket);
     }
 
     @Override

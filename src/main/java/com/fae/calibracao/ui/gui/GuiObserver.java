@@ -43,6 +43,24 @@ public class GuiObserver implements EnsaioObserver {
     private final EnsaioConfig config;
     private final double duracaoTotalSegundos;
 
+    /**
+     * Marca que o ensaio abortou, para o onDesconectado seguinte pintar a conexao como
+     * falha em vez de encerramento normal. Sem sincronizacao porque so e escrito e lido
+     * dentro de Platform.runLater — e o runLater preserva a ordem de submissao, entao o
+     * onFalha sempre e processado antes do onDesconectado.
+     */
+    private boolean ensaioAbortado;
+
+    /**
+     * Ultimo aviso recebido, guardado porque a mensagem final de aborto nao diz a CAUSA.
+     *
+     * O servico tolera duas falhas antes de desistir, entao um ensaio morto por timeout
+     * termina com "conexao perdida apos 3 leituras falhas" — texto que nao distingue
+     * timeout de queda. Quem carrega essa informacao sao os avisos. Combinar os dois e
+     * agregacao de eventos que a propria tela recebeu, nao inspecao do interior do servico.
+     */
+    private String ultimoAviso;
+
     public GuiObserver(ModeloEnsaio modelo, EnsaioConfig config) {
         this.modelo = modelo;
         this.config = config;
@@ -117,16 +135,29 @@ public class GuiObserver implements EnsaioObserver {
 
     @Override
     public void onAviso(String mensagem) {
-        Platform.runLater(() -> modelo.ultimaMensagemProperty().set("aviso: " + mensagem));
+        Platform.runLater(() -> {
+            ultimoAviso = mensagem;
+            modelo.ultimaMensagemProperty().set("aviso: " + mensagem);
+        });
     }
 
     @Override
     public void onFalha(String mensagem) {
         Platform.runLater(() -> {
+            ensaioAbortado = true;
             modelo.situacaoEnsaioProperty().set(ModeloEnsaio.Situacao.ERRO);
-            modelo.textoEnsaioProperty().set("falhou");
+            modelo.textoEnsaioProperty().set("interrompido");
             modelo.ultimaMensagemProperty().set("falha: " + mensagem);
+            modelo.mensagemFalhaProperty().set(comFimECausa(mensagem));
         });
+    }
+
+    /** Junta o motivo do aborto com a causa observada nos avisos, quando houver. */
+    private String comFimECausa(String mensagemDeFalha) {
+        if (ultimoAviso == null || ultimoAviso.isBlank()) {
+            return mensagemDeFalha;
+        }
+        return mensagemDeFalha + System.lineSeparator() + "Causa observada: " + ultimoAviso;
     }
 
     @Override
@@ -146,8 +177,12 @@ public class GuiObserver implements EnsaioObserver {
     @Override
     public void onDesconectado(String endereco) {
         Platform.runLater(() -> {
-            modelo.situacaoSimuladorProperty().set(ModeloEnsaio.Situacao.NEUTRO);
-            modelo.textoSimuladorProperty().set("desconectado");
+            // Encerramento normal e queda de conexao terminam no mesmo evento; o que os
+            // distingue visualmente e se houve falha antes.
+            modelo.situacaoSimuladorProperty().set(
+                    ensaioAbortado ? ModeloEnsaio.Situacao.ERRO : ModeloEnsaio.Situacao.NEUTRO);
+            modelo.textoSimuladorProperty().set(
+                    ensaioAbortado ? "conexao perdida" : "desconectado");
         });
     }
 }

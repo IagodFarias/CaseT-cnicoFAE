@@ -66,6 +66,8 @@ public class ModeloEnsaio {
 
     private final BooleanProperty emAndamento = new SimpleBooleanProperty(false);
     private final StringProperty ultimaMensagem = new SimpleStringProperty("");
+    /** Vazia enquanto o ensaio corre bem; preenchida quando ele e abortado. */
+    private final StringProperty mensagemFalha = new SimpleStringProperty("");
     private final ObjectProperty<RelatorioEnsaio> resultado = new SimpleObjectProperty<>();
 
     private final ObservableList<Leitura> leituras = FXCollections.observableArrayList();
@@ -81,6 +83,7 @@ public class ModeloEnsaio {
         desvioSorteado.set(0);
         pulsos.set(0);
         ultimaMensagem.set("");
+        mensagemFalha.set("");
         resultado.set(null);
         leituras.clear();
     }
@@ -143,6 +146,10 @@ public class ModeloEnsaio {
 
     public StringProperty ultimaMensagemProperty() {
         return ultimaMensagem;
+    }
+
+    public StringProperty mensagemFalhaProperty() {
+        return mensagemFalha;
     }
 
     public ObjectProperty<RelatorioEnsaio> resultadoProperty() {

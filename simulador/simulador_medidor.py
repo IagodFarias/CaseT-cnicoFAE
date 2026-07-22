@@ -25,6 +25,40 @@ import threading
 import time
 
 
+class InjecaoDeFalhas:
+    """
+    Modo de teste do simulador: suspende as respostas por um periodo.
+
+    Serve para o software de calibracao exercitar o tratamento de SocketTimeoutException
+    com uma falha REAL — o simulador simplesmente para de responder, sem fechar a conexao,
+    que e exatamente o que acontece quando o equipamento trava ou a rede engarrafa.
+
+    O estado e GLOBAL do servidor, e nao por conexao, de proposito: quem aciona a injecao
+    e uma conexao de controle separada e efemera, e ela precisa afetar a conexao do ensaio
+    em curso. Fosse por conexao, silenciar a conexao de controle nao teria efeito nenhum
+    sobre o ensaio.
+
+    A injecao expira sozinha, para o simulador voltar a operar sem precisar reiniciar
+    entre uma demonstracao e outra.
+    """
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._silencio_ate = 0.0
+
+    def silenciar(self, segundos):
+        with self._lock:
+            self._silencio_ate = time.monotonic() + segundos
+
+    def ativa(self):
+        with self._lock:
+            return time.monotonic() < self._silencio_ate
+
+    def cancelar(self):
+        with self._lock:
+            self._silencio_ate = 0.0
+
+
 class Ensaio:
     """
     Estado de um ensaio. Cada conexao tem o seu, isolado das demais.
@@ -148,6 +182,11 @@ class ManipuladorEnsaio(socketserver.StreamRequestHandler):
                 if not linha:
                     continue
                 resposta = self._processar(linha)
+                if resposta is None:
+                    # Injecao de falha ativa: a resposta e engolida de proposito. A conexao
+                    # continua aberta, entao o cliente fica esperando ate o setSoTimeout dele
+                    # disparar — que e o cenario que se quer exercitar.
+                    continue
                 self._responder(resposta)
         except (ConnectionResetError, BrokenPipeError):
             log(f"conexao perdida  -- {par}")
@@ -166,6 +205,23 @@ class ManipuladorEnsaio(socketserver.StreamRequestHandler):
             return {"command": "UNKNOWN", "status": "ERROR", "message": "objeto JSON esperado"}
 
         comando = str(msg.get("command", "")).upper()
+
+        # INJETAR e um comando de CONTROLE, fora do protocolo do ensaio. Fica isolado aqui
+        # e e sempre respondido, mesmo com a injecao ativa — senao nao haveria como
+        # confirmar o acionamento nem cancelar o silencio depois.
+        if comando == "INJETAR":
+            segundos = float(msg.get("segundos", 30))
+            self.server.injecao.silenciar(segundos)
+            log(f"INJETAR -> respostas suspensas por {segundos:.0f}s (teste de robustez)")
+            return {"command": "INJETAR", "status": "OK", "segundos": segundos}
+
+        if comando == "CANCELAR_INJECAO":
+            self.server.injecao.cancelar()
+            log("CANCELAR_INJECAO -> respostas normalizadas")
+            return {"command": "CANCELAR_INJECAO", "status": "OK"}
+
+        if self.server.injecao.ativa():
+            return None   # engole a resposta: ver o tratamento no metodo handle
 
         if comando == "START":
             if self.ensaio.start():
@@ -204,6 +260,7 @@ class ServidorSimulador(socketserver.ThreadingTCPServer):
 
     def __init__(self, endereco, handler, config):
         self.config = config
+        self.injecao = InjecaoDeFalhas()   # compartilhada por todas as conexoes
         super().__init__(endereco, handler)
 
 

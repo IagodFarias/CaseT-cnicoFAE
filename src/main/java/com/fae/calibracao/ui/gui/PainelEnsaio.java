@@ -24,6 +24,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
@@ -41,6 +42,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -66,6 +68,14 @@ public class PainelEnsaio extends BorderPane {
     private static final DateTimeFormatter DATA_HORA = DateTimeFormatter.ofPattern("dd/MM HH:mm:ss");
     private static final int HISTORICO_EXIBIDO = 10;
 
+    /**
+     * Duracao do silencio do simulador na injecao de timeout.
+     *
+     * Maior que 3 timeouts consecutivos (3 x 5 s do setSoTimeout) para garantir que o
+     * ensaio aborte, ja que as leituras de acompanhamento toleram duas falhas.
+     */
+    private static final int SEGUNDOS_DE_SILENCIO = 30;
+
     private final ModeloEnsaio modelo = new ModeloEnsaio();
 
     private final TextField campoHost = new TextField("127.0.0.1");
@@ -76,6 +86,11 @@ public class PainelEnsaio extends BorderPane {
 
     private final Button botaoIniciar = new Button("Iniciar ensaio");
     private final Button botaoParar = new Button("Parar");
+
+    private final ComboBox<CenarioFalha> comboFalha = new ComboBox<>();
+    private final Button botaoAplicarFalha = new Button("Aplicar");
+    private final Label rotuloExplicacaoFalha = new Label();
+    private final InjetorDeFalhas injetor = new InjetorDeFalhas();
 
     private final XYChart.Series<Number, Number> serieReferencia = new XYChart.Series<>();
     private final XYChart.Series<Number, Number> serieMedido = new XYChart.Series<>();
@@ -88,6 +103,12 @@ public class PainelEnsaio extends BorderPane {
     private volatile EnsaioRepository repositorio;
     /** Thread do ensaio em curso, guardada para o botao Parar poder interrompe-la. */
     private volatile Thread threadEnsaio;
+    /** Servico do ensaio em curso, guardado para o botao de queda poder derrubar o socket. */
+    private volatile EnsaioService servicoAtivo;
+    /** Configuracao do ensaio em curso, usada para alcancar o simulador na injecao de timeout. */
+    private volatile EnsaioConfig configuracaoEmUso;
+    /** Porta sem servidor armada para o proximo Iniciar; 0 quando nao ha injecao pendente. */
+    private int portaRecusa;
 
     public PainelEnsaio() {
         setPadding(new Insets(14));
@@ -133,9 +154,51 @@ public class PainelEnsaio extends BorderPane {
         mensagem.setTextFill(AMBAR);
         mensagem.setWrapText(true);
 
-        VBox topo = new VBox(4, titulo, subtitulo, espacador(8), form, acoes, indicadores, mensagem);
+        VBox topo = new VBox(4, titulo, subtitulo, espacador(8), form, acoes, indicadores,
+                mensagem, montarPainelInjecao());
         topo.setPadding(new Insets(0, 0, 12, 0));
         return topo;
+    }
+
+    /**
+     * Painel de injecao de falhas.
+     *
+     * Visualmente separado e rotulado como ferramenta de teste porque nao faz parte da
+     * operacao do ensaio: existe para demonstrar que o tratamento de excecao funciona,
+     * provocando falhas REAIS de rede em vez de exibir mensagens fabricadas.
+     */
+    private Node montarPainelInjecao() {
+        Label titulo = new Label("Injecao de falhas (teste de robustez)");
+        titulo.setFont(Font.font("System", FontWeight.BOLD, 12));
+        titulo.setTextFill(VERMELHO);
+
+        comboFalha.getItems().setAll(CenarioFalha.values());
+        comboFalha.getSelectionModel().select(CenarioFalha.QUEDA_CONEXAO);
+        comboFalha.setPrefWidth(220);
+
+        rotuloExplicacaoFalha.setTextFill(CINZA);
+        rotuloExplicacaoFalha.setWrapText(true);
+        rotuloExplicacaoFalha.setMaxWidth(560);
+        atualizarExplicacaoFalha();
+        comboFalha.getSelectionModel().selectedItemProperty()
+                .addListener((obs, antigo, novo) -> atualizarExplicacaoFalha());
+
+        botaoAplicarFalha.setStyle("-fx-base: #f6d4d2;");
+
+        HBox linha = new HBox(10, comboFalha, botaoAplicarFalha);
+        linha.setAlignment(Pos.CENTER_LEFT);
+
+        VBox painel = new VBox(6, titulo, linha, rotuloExplicacaoFalha);
+        painel.setPadding(new Insets(10));
+        painel.setStyle("-fx-border-color: " + paraHex(VERMELHO) + "; -fx-border-width: 1;"
+                + " -fx-border-radius: 6; -fx-border-style: dashed;");
+        VBox.setMargin(painel, new Insets(10, 0, 0, 0));
+        return painel;
+    }
+
+    private void atualizarExplicacaoFalha() {
+        CenarioFalha cenario = comboFalha.getValue();
+        rotuloExplicacaoFalha.setText(cenario == null ? "" : cenario.explicacao());
     }
 
     /** Bolinha colorida + rotulo, reagindo a Situacao do modelo. */
@@ -239,6 +302,12 @@ public class PainelEnsaio extends BorderPane {
         // O veredito e a unica coisa que muda a aparencia do painel inteiro, entao a
         // reacao fica aqui em vez de espalhada em bindings de cor.
         modelo.resultadoProperty().addListener((obs, antigo, novo) -> atualizarPainelResultado(novo));
+        // Falha tem precedencia visual: um ensaio abortado nunca exibe veredito.
+        modelo.mensagemFalhaProperty().addListener((obs, antigo, novo) -> {
+            if (novo != null && !novo.isBlank()) {
+                mostrarInterrupcao(novo);
+            }
+        });
 
         TableView<Ensaio> tabelaHistorico = new TableView<>(modelo.getHistorico());
         tabelaHistorico.getColumns().addAll(List.of(
@@ -287,6 +356,41 @@ public class PainelEnsaio extends BorderPane {
                 r.erroPercentual(), r.volumeReferenciaLitros(), r.volumeMedidoLitros(),
                 r.vazaoMediaLpm(), r.duracaoSegundos()));
         painelResultado.setStyle(estiloPainel(cor));
+    }
+
+    /** Painel de status para ensaio abortado. Nao ha veredito: nao houve medicao valida. */
+    private void mostrarInterrupcao(String motivo) {
+        rotuloResultado.setText("ENSAIO INTERROMPIDO");
+        rotuloResultado.setTextFill(VERMELHO);
+        rotuloDetalheResultado.setText(
+                resumirFalha(motivo) + System.lineSeparator()
+                        + System.lineSeparator() + motivo + System.lineSeparator()
+                        + System.lineSeparator() + "Nenhum laudo foi gravado no banco.");
+        painelResultado.setStyle(estiloPainel(VERMELHO));
+    }
+
+    /**
+     * Manchete especifica por tipo de falha.
+     *
+     * Classifica pela mensagem que o servico produziu, e nao pelo cenario que a GUI
+     * injetou: assim uma queda espontanea de rede — sem injecao nenhuma — recebe o mesmo
+     * texto de uma injetada. A mensagem original e sempre exibida logo abaixo, entao a
+     * classificacao nunca esconde informacao; ela so destaca.
+     */
+    private String resumirFalha(String motivo) {
+        String texto = motivo == null ? "" : motivo.toLowerCase(java.util.Locale.ROOT);
+        if (texto.contains("timeout")) {
+            EnsaioConfig config = configuracaoEmUso;
+            double segundos = (config == null ? 5_000 : config.timeoutLeituraMs()) / 1000.0;
+            return String.format("Timeout: simulador nao respondeu em %.0fs - ensaio interrompido.", segundos);
+        }
+        if (texto.contains("recusada")) {
+            return "Conexao recusada: nao ha simulador escutando no endereco alvo.";
+        }
+        if (texto.contains("perdida") || texto.contains("encerrou") || texto.contains("nao ha conexao")) {
+            return "Conexao perdida com o simulador - ensaio interrompido.";
+        }
+        return "Ensaio interrompido por falha de comunicacao.";
     }
 
     private static String estiloPainel(Color borda) {
@@ -340,6 +444,91 @@ public class PainelEnsaio extends BorderPane {
         botaoParar.disableProperty().bind(modelo.emAndamentoProperty().not());
         botaoIniciar.setOnAction(e -> iniciarEnsaio());
         botaoParar.setOnAction(e -> pararEnsaio());
+
+        // Aplicar depende do cenario escolhido, e nao so de haver ensaio: queda e timeout
+        // exigem ensaio ativo, recusa de conexao so faz sentido com o ensaio parado.
+        botaoAplicarFalha.disableProperty().bind(Bindings.createBooleanBinding(
+                () -> {
+                    CenarioFalha cenario = comboFalha.getValue();
+                    return cenario == null || !cenario.aplicavelCom(modelo.emAndamentoProperty().get());
+                },
+                comboFalha.valueProperty(), modelo.emAndamentoProperty()));
+        botaoAplicarFalha.setOnAction(e -> aplicarFalha());
+    }
+
+    /** Dispara o cenario selecionado. Todo I/O sai da Application Thread. */
+    private void aplicarFalha() {
+        CenarioFalha cenario = comboFalha.getValue();
+        if (cenario == null) {
+            return;
+        }
+        switch (cenario) {
+            case QUEDA_CONEXAO -> derrubarConexao();
+            case TIMEOUT_SIMULADOR -> suspenderRespostasDoSimulador();
+            case RECUSA_CONEXAO -> armarRecusaDeConexao();
+        }
+    }
+
+    /**
+     * Fecha o socket em uso, provocando excecao de I/O real na proxima operacao.
+     *
+     * Retorna imediatamente: TcpClient.derrubarConexao() nao adquire o lock do socket,
+     * justamente para nao bloquear a Application Thread enquanto o ensaio le da rede.
+     */
+    private void derrubarConexao() {
+        EnsaioService servico = this.servicoAtivo;
+        if (servico != null) {
+            modelo.ultimaMensagemProperty().set("queda de conexao provocada pelo operador...");
+            servico.derrubarConexao();
+        }
+    }
+
+    /**
+     * Manda o simulador parar de responder, sem fechar a conexao.
+     *
+     * O comando viaja por uma conexao de controle propria — a do ensaio esta ocupada e
+     * protegida por lock, e usa-la aqui congelaria a Application Thread. Por isso tambem o
+     * envio acontece numa thread separada: e I/O de rede.
+     *
+     * O silencio dura mais que 3 timeouts consecutivos para garantir o aborto, e expira
+     * sozinho, deixando o simulador utilizavel na demonstracao seguinte.
+     */
+    private void suspenderRespostasDoSimulador() {
+        EnsaioConfig config = configuracaoEmUso;
+        if (config == null) {
+            return;
+        }
+        modelo.ultimaMensagemProperty().set("solicitando ao simulador que pare de responder...");
+        Thread t = new Thread(() -> {
+            try {
+                injetor.suspenderRespostas(config.host(), config.porta(), SEGUNDOS_DE_SILENCIO);
+                Platform.runLater(() -> modelo.ultimaMensagemProperty().set(
+                        "simulador silenciado por " + SEGUNDOS_DE_SILENCIO + "s - aguardando o timeout do cliente"));
+            } catch (IOException e) {
+                Platform.runLater(() -> modelo.ultimaMensagemProperty().set(
+                        "nao foi possivel acionar a injecao no simulador: " + e.getMessage()));
+            }
+        }, "injecao-timeout");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /**
+     * Arma o proximo Iniciar para mirar uma porta sem servidor.
+     *
+     * Nao ha simulacao de erro: o connect e feito de verdade contra uma porta onde ninguem
+     * escuta, e o ConnectException resultante e legitimo. O alvo desviado fica visivel na
+     * mensagem para nao parecer que o ensaio falhou na porta configurada.
+     */
+    private void armarRecusaDeConexao() {
+        try {
+            portaRecusa = injetor.portaSemServidor();
+            modelo.ultimaMensagemProperty().set(
+                    "injecao armada: o proximo ensaio vai mirar a porta " + portaRecusa
+                            + " (sem simulador) para provocar recusa de conexao");
+        } catch (IOException e) {
+            modelo.ultimaMensagemProperty().set("nao foi possivel reservar porta para o teste: " + e.getMessage());
+        }
     }
 
     /**
@@ -370,10 +559,31 @@ public class PainelEnsaio extends BorderPane {
             return;
         }
 
+        // Injecao de recusa armada: desvia este ensaio para uma porta sem servidor e se
+        // desarma em seguida, para nao contaminar os ensaios seguintes.
+        String avisoInjecao = null;
+        if (portaRecusa != 0) {
+            config = new EnsaioConfig(config.host(), portaRecusa,
+                    config.timeoutConexaoMs(), config.timeoutLeituraMs(),
+                    config.vazaoNominalLpm(), config.pulsosPorLitro(), config.faixaDesvio(),
+                    config.intervaloPulsosMs(), config.intervaloLeituraMs(), config.duracaoEnsaio());
+            avisoInjecao = "injecao de recusa ativa: mirando a porta " + portaRecusa + " (sem simulador)";
+            portaRecusa = 0;
+        }
+        this.configuracaoEmUso = config;
+
         modelo.limparParaNovoEnsaio();
+        // Chamada explicita, e nao via listener de resultadoProperty: depois de um ensaio
+        // abortado a propriedade continua null, entao set(null) nao dispara mudanca e o
+        // painel vermelho de interrupcao sobreviveria para dentro do ensaio seguinte.
+        atualizarPainelResultado(null);
         modelo.emAndamentoProperty().set(true);
         modelo.situacaoEnsaioProperty().set(ModeloEnsaio.Situacao.ATIVO);
         modelo.textoEnsaioProperty().set("iniciando");
+        if (avisoInjecao != null) {
+            // Depois do limparParaNovoEnsaio, que zera a mensagem.
+            modelo.ultimaMensagemProperty().set(avisoInjecao);
+        }
 
         Classificador classificador = new Classificador();
         ConsoleObserver console = new ConsoleObserver(config, classificador.toleranciaPercentual());
@@ -384,22 +594,32 @@ public class PainelEnsaio extends BorderPane {
         EnsaioService service = new EnsaioService(config, classificador, new Random(),
                 new ObserverComposto(console, new GuiObserver(modelo, config)));
 
+        this.servicoAtivo = service;
         Thread worker = new Thread(() -> executarEnsaio(service), "ensaio-gui");
         worker.setDaemon(true);
         threadEnsaio = worker;
         worker.start();
     }
 
-    /** Corpo da thread de trabalho. Nada aqui toca em Node: tudo passa pelo GuiObserver. */
+    /**
+     * Corpo da thread de trabalho. Nada aqui toca em Node: tudo passa pelo GuiObserver.
+     *
+     * A chamada de persistencia esta DENTRO do try, imediatamente apos executar(): se o
+     * ensaio abortar, executar() lanca EnsaioException e o fluxo salta direto para o
+     * catch, de modo que persistir() nunca chega a ser invocado. Ensaio interrompido nao
+     * gera laudo — nem como APROVADO, nem como registro parcial.
+     */
     private void executarEnsaio(EnsaioService service) {
         try {
             RelatorioEnsaio relatorio = service.executar();
             persistir(relatorio);
         } catch (EnsaioException e) {
-            // Ja publicado como onFalha pelo servico; nada a fazer alem de encerrar.
+            // Ja publicado como onFalha pelo servico; nada a persistir e nada a fazer
+            // alem de encerrar. Nenhuma transacao foi aberta neste caminho.
         } finally {
             Platform.runLater(() -> modelo.emAndamentoProperty().set(false));
             threadEnsaio = null;
+            servicoAtivo = null;
         }
     }
 

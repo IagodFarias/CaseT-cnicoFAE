@@ -44,6 +44,9 @@ public class EnsaioService {
     private final RandomGenerator rng;
     private final EnsaioObserver observer;
 
+    /** Conexao do ensaio em curso; null fora dele. Publicada para {@link #derrubarConexao()}. */
+    private volatile TcpClient clienteAtivo;
+
     public EnsaioService(EnsaioConfig config, Classificador classificador,
                          RandomGenerator rng, EnsaioObserver observer) {
         this.config = config;
@@ -59,6 +62,22 @@ public class EnsaioService {
      * @throws EnsaioException se o ensaio nao pode ser concluido; a aplicacao segue viva
      *                         e quem chama decide o que fazer
      */
+    /**
+     * Derruba a conexao do ensaio em curso, provocando uma falha de rede real.
+     *
+     * Nao altera o fluxo do ensaio nem inventa estado de erro: apenas fecha o socket, e o
+     * tratamento de excecao ja existente reage como reagiria a uma queda de verdade. Sem
+     * efeito se nenhum ensaio estiver rodando.
+     *
+     * Seguro para chamar de qualquer thread, e nao bloqueia — ver TcpClient.derrubarConexao().
+     */
+    public void derrubarConexao() {
+        TcpClient cliente = this.clienteAtivo;
+        if (cliente != null) {
+            cliente.derrubarConexao();
+        }
+    }
+
     public RelatorioEnsaio executar() throws EnsaioException {
         LocalDateTime dataHora = LocalDateTime.now();
         PulseGenerator pulsos = new PulseGenerator(
@@ -71,6 +90,7 @@ public class EnsaioService {
         try (TcpClient cliente = new TcpClient(
                 config.host(), config.porta(), config.timeoutConexaoMs(), config.timeoutLeituraMs())) {
 
+            this.clienteAtivo = cliente;
             cliente.connect();
             observer.onConectado(config.endereco());
 
@@ -103,6 +123,7 @@ public class EnsaioService {
             Thread.currentThread().interrupt();
             throw falha("ensaio interrompido antes de terminar", e);
         } finally {
+            this.clienteAtivo = null;   // o try-with-resources ja fechou o socket
             pulsos.stop();   // idempotente: rede de seguranca contra thread orfa
             observer.onDesconectado(config.endereco());
         }

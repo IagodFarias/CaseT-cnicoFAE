@@ -17,8 +17,10 @@
             <AppenderRef ref="Console"/>
         </Logger>
 
-        <!-- Excecao: o SQL fica visivel, para mostrar o INSERT do laudo acontecendo. -->
-        <Logger name="org.hibernate.SQL" level="debug" additivity="false">
+        <!-- O console pertence ao operador do ensaio, entao o SQL fica fora dele: a
+             confirmacao de gravacao aparece como "laudo gravado com id N" e o historico
+             logo abaixo. Troque para "debug" quando quiser ver os comandos emitidos. -->
+        <Logger name="org.hibernate.SQL" level="info" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
 

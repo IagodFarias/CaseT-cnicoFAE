@@ -34,6 +34,14 @@ public class ConsoleApp {
             return;
         }
 
+        // Modo grafico: a GUI assume a conducao do ensaio, mas o console continua
+        // recebendo os mesmos eventos (ver ObserverComposto), entao o log de texto
+        // segue funcionando neste mesmo terminal.
+        if (args.length > 0 && args[0].equals("--gui")) {
+            com.fae.calibracao.ui.gui.MainGui.main(java.util.Arrays.copyOfRange(args, 1, args.length));
+            return;
+        }
+
         EnsaioConfig config;
         try {
             config = lerConfiguracao(args);
@@ -134,6 +142,7 @@ public class ConsoleApp {
 
     private static void imprimirAjuda() {
         System.out.println("Uso: java -jar calibracao.jar [host] [porta] [duracaoSegundos]");
+        System.out.println("     java -jar calibracao.jar --gui        (interface grafica)");
         System.out.println();
         System.out.println("  host             endereco do simulador   (padrao " + HOST_PADRAO + ")");
         System.out.println("  porta            porta TCP do simulador  (padrao " + PORTA_PADRAO + ")");

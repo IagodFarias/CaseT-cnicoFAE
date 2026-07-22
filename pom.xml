@@ -23,6 +23,8 @@
         <log4j.version>2.24.3</log4j.version>
         <h2.version>2.3.232</h2.version>
         <junit.version>5.11.3</junit.version>
+        <!-- JavaFX 21 e LTS e a ultima linha que suporta Java 17 -->
+        <javafx.version>21.0.5</javafx.version>
     </properties>
 
     <dependencies>
@@ -77,6 +79,15 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Interface grafica. javafx-controls ja traz base e graphics transitivamente;
+             o LineChart do painel de acompanhamento vem daqui. Sem javafx-fxml: a tela e
+             montada em codigo, o que evita um arquivo .fxml a mais para manter em sincronia. -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+
         <!-- Testes -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -99,6 +110,18 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.2</version>
+            </plugin>
+
+            <!-- Permite 'mvn javafx:run' para abrir a GUI sem empacotar. O plugin monta o
+                 module-path do JavaFX automaticamente, evitando o "JavaFX runtime
+                 components are missing" tipico de rodar JavaFX pelo classpath. -->
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>com.fae.calibracao.ui.gui.MainGui</mainClass>
+                </configuration>
             </plugin>
 
             <!-- Gera jar unico executavel: java -jar target/calibracao.jar -->

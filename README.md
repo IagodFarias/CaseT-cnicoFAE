@@ -84,8 +84,10 @@ src/main/java/com/fae/calibracao/
 │                  Orquestração do fluxo e tratamento de falhas
 ├── persistence/   Ensaio (entidade JPA), EnsaioRepository
 │                  Hibernate / PostgreSQL
-└── ui/            ConsoleApp, ConsoleObserver
-                   Apresentação; recebe eventos do service
+└── ui/            ConsoleApp, ConsoleObserver, ObserverComposto
+    │              Apresentação; recebe eventos do service
+    └── gui/       MainGui, CalibracaoApp, PainelEnsaio, GuiObserver, ModeloEnsaio
+                   Interface JavaFX; convive com o console
 
 simulador/
 └── simulador_medidor.py     servidor TCP do medidor de referência
@@ -240,6 +242,23 @@ java -jar target/calibracao.jar --help
 
 </details>
 
+### 4b. Interface gráfica (opcional)
+
+```bash
+java -jar target/calibracao.jar --gui    # jar empacotado
+mvn javafx:run                           # direto pelo Maven
+```
+
+A GUI é uma **camada adicional**, não um substituto: o console continua imprimindo o log
+completo no mesmo terminal, alimentado pelos mesmos eventos. A tela mostra indicadores de
+conexão (simulador e banco), painel de configuração, barra de progresso, números em
+destaque, gráfico em tempo real de volume de referência × medido, tabela das leituras,
+histórico do banco colorido por resultado e o veredito em verde/vermelho.
+
+> ⚠️ O Maven resolve o JavaFX com o classifier da plataforma de build (aqui, `win`), então
+> o jar empacotado abre a GUI **apenas no sistema operacional em que foi compilado**. Em
+> outro sistema o console funciona normalmente e a GUI abre via `mvn javafx:run`.
+
 ### 5. Conferir o laudo no banco
 
 ```bash
@@ -348,6 +367,33 @@ Nenhuma falha derruba a aplicação:
 são distintas porque exigem reações distintas — a segunda não invalida a conexão. As
 leituras periódicas são observacionais: perder uma não corrompe a medição, que depende
 apenas das duas leituras de borda. Três falhas de comunicação consecutivas abortam.
+
+### Segurança de thread na GUI
+
+O ensaio roda em duas threads próprias (comunicação TCP e geração de pulsos), mas o JavaFX
+só permite tocar em componentes de tela pela sua própria *Application Thread*. Violar isso
+não trava na hora — produz corrupção visual intermitente, que é o pior tipo de bug para
+diagnosticar.
+
+A garantia é **por construção**, não por disciplina espalhada pelo código:
+
+1. `GuiObserver` é a única classe da GUI que o `EnsaioService` conhece — todo dado vindo de
+   outra thread entra na tela por ali.
+2. Todo método dela tem a mesma forma: calcula com os argumentos recebidos (valores
+   imutáveis) e entrega o resultado a `Platform.runLater`. Nenhuma propriedade é tocada
+   fora dele.
+3. Como `ModeloEnsaio` só é escrito daí, e daí só dentro de `runLater`, todo o estado da
+   tela fica **confinado** à Application Thread. Confinamento dispensa lock: não há acesso
+   concorrente a excluir.
+
+Os cálculos ficam fora do `runLater` de propósito — essa fila é a mesma que desenha os
+quadros, então o que roda nela atrasa a renderização. Pelo mesmo motivo, o ensaio é
+disparado numa thread de trabalho: na Application Thread, a janela congelaria durante todo
+o ensaio e o botão Parar não responderia.
+
+O botão Parar apenas interrompe a thread do ensaio. O `EnsaioService` já tratava
+`InterruptedException` (restaura o flag, para os pulsos, fecha o socket), então **parar não
+exigiu nenhuma alteração na camada de serviço**.
 
 ### Desvio sorteado uma vez por ensaio
 

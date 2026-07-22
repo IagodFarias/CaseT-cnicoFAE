@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+                                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+
+    <!-- RESOURCE_LOCAL: aplicacao standalone, sem servidor de aplicacao gerenciando transacoes -->
+    <persistence-unit name="calibracaoPU" transaction-type="RESOURCE_LOCAL">
+
+        <class>com.fae.calibracao.persistence.Ensaio</class>
+        <!-- So as classes listadas acima sao mapeadas: evita varredura do classpath -->
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <!-- Valores alinhados ao docker-compose.yml. Sobrescreviveis por
+                 DB_URL / DB_USER / DB_PASSWORD sem recompilar. -->
+            <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/calibracao"/>
+            <property name="jakarta.persistence.jdbc.user" value="calibracao"/>
+            <property name="jakarta.persistence.jdbc.password" value="calibracao"/>
+
+            <!-- update cria a tabela no primeiro run e preserva os dados entre execucoes.
+                 Adequado a um projeto de demonstracao; em producao o schema seria
+                 versionado por migracoes (Flyway/Liquibase) e isso ficaria em 'validate'. -->
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+
+
+            <!-- show_sql fica FALSE de proposito: ele escreve direto no System.out e
+                 duplicaria cada comando, ja que o log4j2.xml mantem o logger
+                 org.hibernate.SQL em debug. O SQL continua visivel, uma vez so. -->
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="false"/>
+
+            <!-- Pool de conexoes do Hibernate. Suficiente aqui: a aplicacao usa uma
+                 conexao por vez, apenas para gravar o laudo ao fim do ensaio. -->
+            <property name="hibernate.connection.pool_size" value="5"/>
+        </properties>
+    </persistence-unit>
+</persistence>

@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: calibracao-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: calibracao
+      POSTGRES_USER: calibracao
+      POSTGRES_PASSWORD: calibracao
+    ports:
+      - "5432:5432"
+    volumes:
+      # Dados sobrevivem a 'docker compose down'; use 'down -v' para zerar.
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # A aplicacao so deve tentar conectar depois que o banco aceita conexoes:
+      # o Postgres sobe a porta antes de estar realmente pronto.
+      test: ["CMD-SHELL", "pg_isready -U calibracao -d calibracao"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  postgres-data:

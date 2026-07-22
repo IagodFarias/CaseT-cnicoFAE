@@ -1,6 +1,10 @@
 package com.fae.calibracao.ui;
 
 import com.fae.calibracao.domain.Classificador;
+import com.fae.calibracao.domain.RelatorioEnsaio;
+import com.fae.calibracao.persistence.Ensaio;
+import com.fae.calibracao.persistence.EnsaioRepository;
+import com.fae.calibracao.persistence.PersistenciaException;
 import com.fae.calibracao.service.EnsaioConfig;
 import com.fae.calibracao.service.EnsaioException;
 import com.fae.calibracao.service.EnsaioService;
@@ -38,16 +42,55 @@ public class ConsoleApp {
                 config.endereco(), config.vazaoNominalLpm(), config.pulsosPorLitro(), duracaoSegundos);
         System.out.println();
 
-        EnsaioService service = new EnsaioService(
-                config, new Classificador(), new Random(), new ConsoleObserver());
+        // O banco e aberto ANTES do ensaio: melhor descobrir que ele esta fora agora do
+        // que depois de rodar o ensaio inteiro e nao ter onde gravar o laudo.
+        try (EnsaioRepository repositorio = abrirRepositorio()) {
 
+            EnsaioService service = new EnsaioService(
+                    config, new Classificador(), new Random(), new ConsoleObserver());
+
+            RelatorioEnsaio relatorio;
+            try {
+                relatorio = service.executar();
+            } catch (EnsaioException e) {
+                System.err.println();
+                System.err.println("[ERRO] ensaio nao concluido: " + e.getMessage());
+                System.exit(1);
+                return;
+            }
+
+            persistir(repositorio, relatorio);
+        }
+    }
+
+    /** Devolve null (sem persistencia) em vez de abortar: o ensaio ainda tem valor sem banco. */
+    private static EnsaioRepository abrirRepositorio() {
         try {
-            service.executar();
-        } catch (EnsaioException e) {
-            // O observador ja detalhou a falha; aqui so encerramos com codigo de erro.
-            System.err.println();
-            System.err.println("[ERRO] ensaio nao concluido: " + e.getMessage());
-            System.exit(1);
+            EnsaioRepository repositorio = new EnsaioRepository();
+            System.out.println("[banco  ] conectado");
+            System.out.println();
+            return repositorio;
+        } catch (PersistenciaException e) {
+            System.out.println("[banco  ] INDISPONIVEL - o ensaio rodara sem gravar o laudo");
+            System.out.println("[banco  ] " + e.getMessage());
+            System.out.println("[banco  ] suba o PostgreSQL com: docker compose up -d");
+            System.out.println();
+            return null;
+        }
+    }
+
+    private static void persistir(EnsaioRepository repositorio, RelatorioEnsaio relatorio) {
+        if (repositorio == null) {
+            System.out.println("[banco  ] laudo NAO gravado (banco indisponivel)");
+            return;
+        }
+        try {
+            Ensaio gravado = repositorio.salvar(relatorio);
+            System.out.println("[banco  ] laudo gravado com id " + gravado.getId()
+                    + " (total de ensaios: " + repositorio.contar() + ")");
+        } catch (PersistenciaException e) {
+            // Falha de gravacao nao derruba a aplicacao: o resultado ja foi exibido.
+            System.err.println("[banco  ] falha ao gravar o laudo: " + e.getMessage());
         }
     }
 }

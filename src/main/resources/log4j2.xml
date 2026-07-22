@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <!-- Sem timestamp nem nome de classe: o console e do operador do ensaio,
+                 nao de quem depura o Hibernate. -->
+            <PatternLayout pattern="[log    ] %-5level %msg%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <!-- O Hibernate loga muito em INFO na inicializacao e, quando o banco esta fora,
+             despeja o stack trace inteiro da falha de conexao. Como a aplicacao ja trata
+             e reporta essa falha com mensagem propria, silenciamos ate ERROR. -->
+        <Logger name="org.hibernate" level="error" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- Excecao: o SQL fica visivel, para mostrar o INSERT do laudo acontecendo. -->
+        <Logger name="org.hibernate.SQL" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Root level="warn">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>

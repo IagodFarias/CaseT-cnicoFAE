@@ -135,6 +135,22 @@ public class PulseGenerator {
         return ativo;
     }
 
+    /**
+     * Instante (System.nanoTime) em que a contagem comecou: o t_inicio da janela do ensaio.
+     */
+    public long inicioNanos() {
+        return inicioNanos;
+    }
+
+    /**
+     * Instante em que a thread foi sinalizada para parar: o t_fim da janela do ensaio.
+     * E exatamente o instante usado na contagem final de pulsos, entao os pulsos gerados
+     * e a janela sempre concordam. Zero enquanto o gerador nao foi parado.
+     */
+    public long fimNanos() {
+        return fimNanos;
+    }
+
     /** Duracao da geracao: ate agora se ativo, ou o total final se ja parou. */
     public Duration duracao() {
         if (inicioNanos == 0) {

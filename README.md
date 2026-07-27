@@ -155,6 +155,24 @@ Sobe um PostgreSQL 16 com banco/usuário/senha `calibracao` na porta 5432. A tab
 `ensaio` é criada automaticamente pelo Hibernate na primeira execução
 (`hbm2ddl.auto=update`).
 
+#### Alternativa sem Docker (PostgreSQL nativo — Windows)
+
+Nesta máquina o PostgreSQL roda como cluster nativo em `~/tools/pg16`, com as mesmas
+credenciais do `docker-compose.yml`. Ligue o banco no PowerShell antes de rodar a
+aplicação:
+
+```powershell
+# Subir o banco
+& "$env:USERPROFILE\tools\pg16\pgsql\bin\pg_ctl.exe" -D "$env:USERPROFILE\tools\pg16\data" -o "-p 5432 -h 127.0.0.1" start
+
+# Confirmar que está no ar
+& "$env:USERPROFILE\tools\pg16\pgsql\bin\pg_isready.exe" -h 127.0.0.1 -p 5432 -U calibracao
+```
+
+> ⚠️ O cluster **não sobe sozinho no boot**: repita este passo **toda vez que a máquina
+> for reiniciada**. Se o banco não estiver de pé, a aplicação exibirá
+> `[banco] INDISPONIVEL` e rodará o ensaio sem gravar o laudo.
+
 ### 2. Compilar o cliente
 
 ```bash

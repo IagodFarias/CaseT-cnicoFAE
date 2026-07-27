@@ -12,6 +12,9 @@ import com.fae.calibracao.protocol.Command;
 import com.fae.calibracao.protocol.ProtocolException;
 import com.fae.calibracao.protocol.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.time.LocalDateTime;
 import java.util.random.RandomGenerator;
 
@@ -35,6 +38,8 @@ import java.util.random.RandomGenerator;
  * subtracao. O que sobra e jitter de rede, aleatorio, e nao vies sistematico.
  */
 public class EnsaioService {
+
+    private static final Logger LOG = LogManager.getLogger(EnsaioService.class);
 
     /** Leituras de acompanhamento sao observacionais; algumas podem falhar sem invalidar o ensaio. */
     private static final int FALHAS_CONSECUTIVAS_TOLERADAS = 3;
@@ -85,6 +90,9 @@ public class EnsaioService {
                 config.faixaDesvio(), config.intervaloPulsosMs(), rng);
 
         observer.onConectando(config.endereco());
+        LOG.info("ensaio iniciado (host={}, vazao={} L/min, K={} pulsos/L, duracao={} s)",
+                config.endereco(), config.vazaoNominalLpm(), config.pulsosPorLitro(),
+                config.duracaoEnsaio().toSeconds());
 
         // try-with-resources: o socket fecha em qualquer saida, inclusive por excecao.
         try (TcpClient cliente = new TcpClient(
@@ -93,6 +101,7 @@ public class EnsaioService {
             this.clienteAtivo = cliente;
             cliente.connect();
             observer.onConectado(config.endereco());
+            LOG.info("conexao estabelecida com {}", config.endereco());
 
             iniciarNoSimulador(cliente);
 
@@ -102,7 +111,11 @@ public class EnsaioService {
                 // depois. Ver o javadoc da classe sobre o cancelamento da latencia.
                 pulsos.start();
                 observer.onIniciado(pulsos.desvioPercentual(), pulsos.vazaoEfetivaLpm());
+                LOG.info("START confirmado; medicao em andamento (desvio sorteado {} %, vazao efetiva {} L/min)",
+                        String.format("%+.3f", pulsos.desvioPercentual()),
+                        String.format("%.3f", pulsos.vazaoEfetivaLpm()));
                 referenciaInicial = lerVolume(cliente, "leitura inicial da referencia");
+                LOG.info("leitura inicial da referencia: {} L", String.format("%.3f", referenciaInicial));
 
                 acompanhar(cliente, pulsos);
             } finally {
@@ -111,6 +124,7 @@ public class EnsaioService {
             }
 
             double referenciaFinal = lerVolume(cliente, "leitura final da referencia");
+            LOG.info("leitura final da referencia: {} L", String.format("%.3f", referenciaFinal));
             encerrarNoSimulador(cliente);
 
             return consolidar(dataHora, pulsos, referenciaInicial, referenciaFinal);
@@ -126,6 +140,7 @@ public class EnsaioService {
             this.clienteAtivo = null;   // o try-with-resources ja fechou o socket
             pulsos.stop();   // idempotente: rede de seguranca contra thread orfa
             observer.onDesconectado(config.endereco());
+            LOG.info("conexao com {} encerrada", config.endereco());
         }
     }
 
@@ -142,6 +157,10 @@ public class EnsaioService {
             // O STOP e limpeza: as medicoes ja foram colhidas, entao isso nao invalida
             // o ensaio — mas o operador precisa saber que o simulador ficou ativo.
             observer.onAviso("simulador recusou o STOP: " + fim.errorText());
+            LOG.warn("simulador recusou o STOP: {} (medicoes ja colhidas, ensaio segue valido)",
+                    fim.errorText());
+        } else {
+            LOG.info("STOP enviado e aceito pelo simulador");
         }
     }
 
@@ -183,24 +202,37 @@ public class EnsaioService {
                 Response resposta = cliente.send(Command.READ);
                 if (resposta.isError()) {
                     observer.onAviso("leitura " + leitura + " recusada: " + resposta.errorText());
+                    LOG.warn("READ #{} recusado pelo simulador: {} (acompanhamento; ensaio segue)",
+                            leitura, resposta.errorText());
                     continue;
                 }
                 falhasSeguidas = 0;
+                double volumeRef = resposta.requireVolume();
+                double vazao = resposta.requireFlowRate();
+                double decorridoS = (System.nanoTime() - pulsos.inicioNanos()) / 1_000_000_000.0;
                 observer.onProgresso(new ProgressoEnsaio(
                         leitura,
-                        (System.nanoTime() - pulsos.inicioNanos()) / 1_000_000_000.0,
-                        resposta.requireVolume(),
+                        decorridoS,
+                        volumeRef,
                         pulsos.pulsos(),
                         pulsos.volumeMedidoLitros(),
-                        resposta.requireFlowRate(),
+                        vazao,
                         resposta.isStable()));
+                // READ resumido: uma linha por leitura de acompanhamento.
+                LOG.info("READ #{} t={}s Vref={} L pulsos={} vazao={} L/min estavel={}",
+                        leitura, String.format("%.1f", decorridoS), String.format("%.3f", volumeRef),
+                        pulsos.pulsos(), String.format("%.2f", vazao), resposta.isStable());
             } catch (ProtocolException e) {
                 // Transporte intacto, conteudo invalido: a conexao segue utilizavel.
                 observer.onAviso("leitura " + leitura + " descartada: " + e.getMessage());
+                LOG.warn("READ #{} descartado (resposta invalida do simulador): {} "
+                        + "- transporte intacto, ensaio segue", leitura, e.getMessage(), e);
             } catch (CommunicationException e) {
                 falhasSeguidas++;
                 observer.onAviso("leitura " + leitura + " falhou (" + falhasSeguidas + "/"
                         + FALHAS_CONSECUTIVAS_TOLERADAS + "): " + e.getMessage());
+                LOG.warn("READ #{} falhou ({}/{}): {}",
+                        leitura, falhasSeguidas, FALHAS_CONSECUTIVAS_TOLERADAS, e.getMessage(), e);
                 if (falhasSeguidas >= FALHAS_CONSECUTIVAS_TOLERADAS) {
                     throw falha("conexao com " + config.endereco()
                             + " perdida durante o ensaio apos " + falhasSeguidas + " leituras consecutivas falhas", e);
@@ -225,12 +257,36 @@ public class EnsaioService {
         RelatorioEnsaio relatorio = RelatorioEnsaio.de(
                 dataHora, medicao, config.vazaoNominalLpm(), pulsos.desvioPercentual(), resultado);
         observer.onFinalizado(relatorio);
+        // Laudo final: o registro que resume o ensaio inteiro em uma linha.
+        LOG.info("LAUDO: resultado={} erro={} % K={} pulsos/L vazaoMedia={} L/min "
+                        + "Vref={} L Vmed={} L pulsos={} duracao={} s",
+                relatorio.resultado(),
+                String.format("%+.3f", relatorio.erroPercentual()),
+                String.format("%.0f", relatorio.pulsosPorLitro()),
+                String.format("%.3f", relatorio.vazaoMediaLpm()),
+                String.format("%.3f", relatorio.volumeReferenciaLitros()),
+                String.format("%.3f", relatorio.volumeMedidoLitros()),
+                relatorio.pulsosGerados(),
+                String.format("%.2f", relatorio.duracaoSegundos()));
         return relatorio;
     }
 
-    /** Publica a falha para o observador e devolve a excecao a ser lancada. */
+    /**
+     * Publica a falha para o observador, registra-a e devolve a excecao a ser lancada.
+     *
+     * Loga em ERROR com a mensagem e a stack trace completa (a causa passa como ultimo
+     * argumento ao logger, nunca so o getMessage). Como TODA EnsaioException nasce aqui,
+     * este e o unico ponto que precisa logar as falhas do fluxo do ensaio — as camadas
+     * abaixo apenas lancam, sem duplicar registro.
+     */
     private EnsaioException falha(String mensagem, Throwable causa) {
         observer.onFalha(mensagem);
-        return causa == null ? new EnsaioException(mensagem) : new EnsaioException(mensagem, causa);
+        if (causa == null) {
+            // Falha de regra do ensaio (ex.: START recusado): sem stack de origem util.
+            LOG.error("ensaio abortado: {}", mensagem);
+            return new EnsaioException(mensagem);
+        }
+        LOG.error("ensaio abortado: {}", mensagem, causa);
+        return new EnsaioException(mensagem, causa);
     }
 }

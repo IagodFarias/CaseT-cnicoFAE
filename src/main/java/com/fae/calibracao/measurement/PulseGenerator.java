@@ -1,6 +1,11 @@
 package com.fae.calibracao.measurement;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
+
 import java.time.Duration;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.random.RandomGenerator;
 
@@ -16,6 +21,8 @@ import java.util.random.RandomGenerator;
  * vazao nominal x (1 + desvio), o erro final do ensaio converge para o desvio sorteado.
  */
 public class PulseGenerator {
+
+    private static final Logger LOG = LogManager.getLogger(PulseGenerator.class);
 
     private final double pulsosPorLitro;          // constante K do medidor
     private final double desvioPercentual;        // sorteado uma vez, no construtor
@@ -59,7 +66,10 @@ public class PulseGenerator {
         inicioNanos = System.nanoTime();
         fimNanos = 0;
         ativo = true;
-        thread = new Thread(this::gerar, "gerador-pulsos");
+        // Captura o MDC de quem chama start() (a thread do ensaio, que ja tem o ensaioId)
+        // para que os logs da thread de pulsos saiam marcados com o mesmo ensaio.
+        Map<String, String> contextoEnsaio = ThreadContext.getImmutableContext();
+        thread = new Thread(() -> gerarComContexto(contextoEnsaio), "gerador-pulsos");
         thread.setDaemon(true);   // nao impede a JVM de encerrar se o ensaio abortar
         thread.start();
     }
@@ -80,6 +90,29 @@ public class PulseGenerator {
             Thread.currentThread().interrupt();
         }
         this.thread = null;
+    }
+
+    /**
+     * Corpo da thread com o contexto do ensaio herdado e uma rede de seguranca de log.
+     *
+     * Herda o ensaioId no MDC desta thread e, sobretudo, garante que um erro inesperado na
+     * geracao de pulsos NAO morra em silencio: sem este catch a thread daemon terminaria
+     * sem rastro e o ensaio seguiria contando pulsos parados. O erro e logado em ERROR com
+     * a stack completa; limpar o MDC no fim evita vazar o contexto para reuso de thread.
+     */
+    private void gerarComContexto(Map<String, String> contextoEnsaio) {
+        if (!contextoEnsaio.isEmpty()) {
+            ThreadContext.putAll(contextoEnsaio);
+        }
+        try {
+            gerar();
+        } catch (RuntimeException e) {
+            ativo = false;   // sinaliza a parada: a contagem congela no ultimo valor valido
+            LOG.error("falha na thread de pulsos apos {} pulsos gerados; geracao interrompida",
+                    pulsos.get(), e);
+        } finally {
+            ThreadContext.clearMap();
+        }
     }
 
     private void gerar() {

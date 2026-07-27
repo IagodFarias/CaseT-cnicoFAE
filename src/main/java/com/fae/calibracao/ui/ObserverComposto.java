@@ -4,6 +4,9 @@ import com.fae.calibracao.domain.RelatorioEnsaio;
 import com.fae.calibracao.service.EnsaioObserver;
 import com.fae.calibracao.service.ProgressoEnsaio;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.List;
 
 /**
@@ -22,6 +25,8 @@ import java.util.List;
  * a apresentacao nunca deve derrubar o ensaio.
  */
 public class ObserverComposto implements EnsaioObserver {
+
+    private static final Logger LOG = LogManager.getLogger(ObserverComposto.class);
 
     private final List<EnsaioObserver> observadores;
 
@@ -74,9 +79,10 @@ public class ObserverComposto implements EnsaioObserver {
             try {
                 evento.accept(observador);
             } catch (RuntimeException e) {
-                // Reportado na saida de erro para nao se misturar ao laudo no stdout.
-                System.err.println("[UI] observador " + observador.getClass().getSimpleName()
-                        + " falhou em " + nome + ": " + e);
+                // Falha de apresentacao e recuperavel (os demais observadores seguem e o
+                // ensaio continua), entao WARN — nao ERROR. Com a stack para diagnostico.
+                LOG.warn("observador {} falhou em {}: {}",
+                        observador.getClass().getSimpleName(), nome, e.getMessage(), e);
             }
         }
     }

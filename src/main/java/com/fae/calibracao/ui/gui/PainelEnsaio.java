@@ -7,11 +7,15 @@ import com.fae.calibracao.measurement.DeviationRange;
 import com.fae.calibracao.persistence.Ensaio;
 import com.fae.calibracao.persistence.EnsaioRepository;
 import com.fae.calibracao.persistence.PersistenciaException;
+import com.fae.calibracao.service.ContextoEnsaio;
 import com.fae.calibracao.service.EnsaioConfig;
 import com.fae.calibracao.service.EnsaioException;
 import com.fae.calibracao.service.EnsaioService;
 import com.fae.calibracao.ui.ConsoleObserver;
 import com.fae.calibracao.ui.ObserverComposto;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -59,6 +63,8 @@ import java.util.Random;
  * a janela congelaria durante todo o ensaio (nao repinta, nao responde ao botao Parar).
  */
 public class PainelEnsaio extends BorderPane {
+
+    private static final Logger LOG = LogManager.getLogger(PainelEnsaio.class);
 
     private static final Color VERDE = Color.web("#1b7f3b");
     private static final Color VERMELHO = Color.web("#b3261e");
@@ -610,12 +616,16 @@ public class PainelEnsaio extends BorderPane {
      * gera laudo — nem como APROVADO, nem como registro parcial.
      */
     private void executarEnsaio(EnsaioService service) {
-        try {
-            RelatorioEnsaio relatorio = service.executar();
-            persistir(relatorio);
-        } catch (EnsaioException e) {
-            // Ja publicado como onFalha pelo servico; nada a persistir e nada a fazer
-            // alem de encerrar. Nenhuma transacao foi aberta neste caminho.
+        // ContextoEnsaio aberto NESTA thread (a worker do ensaio): marca com o mesmo
+        // ensaioId os logs do servico, da thread de pulsos e da persistencia abaixo.
+        try (ContextoEnsaio ctx = ContextoEnsaio.abrir()) {
+            try {
+                RelatorioEnsaio relatorio = service.executar();
+                persistir(relatorio);
+            } catch (EnsaioException e) {
+                // Ja logado em ERROR e publicado como onFalha pelo servico; nada a
+                // persistir e nada a fazer alem de encerrar. Nenhuma transacao foi aberta.
+            }
         } finally {
             Platform.runLater(() -> modelo.emAndamentoProperty().set(false));
             threadEnsaio = null;
@@ -633,11 +643,15 @@ public class PainelEnsaio extends BorderPane {
         try {
             Ensaio gravado = repo.salvar(relatorio);
             List<Ensaio> ultimos = repo.listarUltimos(HISTORICO_EXIBIDO);
+            LOG.info("laudo gravado com id {}", gravado.getId());
             Platform.runLater(() -> {
                 modelo.ultimaMensagemProperty().set("laudo gravado com id " + gravado.getId());
                 modelo.getHistorico().setAll(ultimos);
             });
         } catch (PersistenciaException e) {
+            // Erro real (laudo perdido), mas nao derruba a GUI: ERROR com a stack completa
+            // (causa JDBC encadeada) nos arquivos, e um aviso curto na tela.
+            LOG.error("falha ao gravar o laudo do ensaio no banco", e);
             Platform.runLater(() -> modelo.ultimaMensagemProperty()
                     .set("falha ao gravar o laudo: " + e.getMessage()));
         }
@@ -661,6 +675,10 @@ public class PainelEnsaio extends BorderPane {
                     modelo.getHistorico().setAll(ultimos);
                 });
             } catch (PersistenciaException e) {
+                // Banco fora e situacao recuperavel: os ensaios rodam sem gravar. WARN, nao
+                // ERROR — e sem stack, ja que a causa (Hibernate) e esperada aqui.
+                LOG.warn("banco indisponivel na inicializacao; ensaios rodarao sem gravar: {}",
+                        e.getMessage());
                 Platform.runLater(() -> {
                     modelo.situacaoBancoProperty().set(ModeloEnsaio.Situacao.ERRO);
                     modelo.textoBancoProperty().set("indisponivel");

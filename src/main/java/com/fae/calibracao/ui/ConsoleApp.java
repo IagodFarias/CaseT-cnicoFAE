@@ -5,9 +5,13 @@ import com.fae.calibracao.domain.RelatorioEnsaio;
 import com.fae.calibracao.persistence.Ensaio;
 import com.fae.calibracao.persistence.EnsaioRepository;
 import com.fae.calibracao.persistence.PersistenciaException;
+import com.fae.calibracao.service.ContextoEnsaio;
 import com.fae.calibracao.service.EnsaioConfig;
 import com.fae.calibracao.service.EnsaioException;
 import com.fae.calibracao.service.EnsaioService;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
@@ -20,6 +24,8 @@ import java.util.Random;
  * Uso: java -jar calibracao.jar [host] [porta] [duracaoSegundos]
  */
 public class ConsoleApp {
+
+    private static final Logger LOG = LogManager.getLogger(ConsoleApp.class);
 
     private static final String HOST_PADRAO = "127.0.0.1";
     private static final int PORTA_PADRAO = 5000;
@@ -46,7 +52,7 @@ public class ConsoleApp {
         try {
             config = lerConfiguracao(args);
         } catch (IllegalArgumentException e) {
-            System.err.println("[ERRO] " + e.getMessage());
+            LOG.error("configuracao invalida: {}", e.getMessage());
             imprimirAjuda();
             System.exit(2);
             return;
@@ -58,7 +64,10 @@ public class ConsoleApp {
 
         // O banco e aberto ANTES do ensaio: melhor descobrir que ele esta fora agora do
         // que depois de rodar o ensaio inteiro e nao ter onde gravar o laudo.
-        try (EnsaioRepository repositorio = abrirRepositorio(observer)) {
+        // ContextoEnsaio marca todas as linhas de log — inclusive as de persistencia,
+        // que rodam apos executar() — com o mesmo ensaioId.
+        try (EnsaioRepository repositorio = abrirRepositorio(observer);
+             ContextoEnsaio ctx = ContextoEnsaio.abrir()) {
 
             EnsaioService service = new EnsaioService(config, classificador, new Random(), observer);
 
@@ -66,8 +75,8 @@ public class ConsoleApp {
             try {
                 relatorio = service.executar();
             } catch (EnsaioException e) {
-                System.err.println();
-                System.err.println("[ERRO] ensaio nao concluido: " + e.getMessage());
+                // Ja logado em ERROR com a stack pelo EnsaioService e exibido ao operador
+                // via observer.onFalha(); aqui so encerra com codigo de erro.
                 System.exit(1);
                 return;
             }
@@ -114,16 +123,19 @@ public class ConsoleApp {
 
     private static void persistir(EnsaioRepository repositorio, RelatorioEnsaio relatorio) {
         if (repositorio == null) {
-            System.out.println("  [banco  ] laudo NAO gravado (banco indisponivel)");
+            LOG.warn("laudo NAO gravado: banco indisponivel");
             return;
         }
         try {
             Ensaio gravado = repositorio.salvar(relatorio);
+            LOG.info("laudo gravado com id {}", gravado.getId());
             System.out.println("  [banco  ] laudo gravado com id " + gravado.getId());
             imprimirHistorico(repositorio);
         } catch (PersistenciaException e) {
-            // Falha de gravacao nao derruba a aplicacao: o resultado ja foi exibido.
-            System.err.println("  [banco  ] falha ao gravar o laudo: " + e.getMessage());
+            // Falha de gravacao nao derruba a aplicacao: o resultado ja foi exibido. Mas e
+            // um erro real (laudo perdido), logado em ERROR com a stack completa — a causa
+            // JDBC vem encadeada na PersistenciaException.
+            LOG.error("falha ao gravar o laudo do ensaio no banco", e);
         }
     }
 

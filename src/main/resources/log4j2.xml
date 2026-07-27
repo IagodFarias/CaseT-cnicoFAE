@@ -1,20 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
 
+    <Properties>
+        <!-- Diretorio dos arquivos de log, relativo ao diretorio de trabalho. -->
+        <Property name="LOG_DIR">logs</Property>
+        <!-- Layout dos ARQUIVOS: timestamp, nivel, thread, o ensaioId vindo do MDC
+             (%X{ensaioId}) e a mensagem. O %throwable ao final grava a stack trace
+             completa de qualquer excecao passada ao logger. -->
+        <Property name="PADRAO_ARQUIVO">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] [ensaio=%X{ensaioId}] %logger{1.} - %msg%n%throwable</Property>
+    </Properties>
+
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <!-- Sem timestamp nem nome de classe: o console e do operador do ensaio,
-                 nao de quem depura o Hibernate. -->
-            <PatternLayout pattern="[log    ] %-5level %msg%n"/>
+                 nao de quem depura o Hibernate. A rastreabilidade completa (timestamp,
+                 thread, ensaioId, stack) fica nos arquivos.
+                 alwaysWriteExceptions="false": sem o padrao nao ter %throwable, o Log4j2
+                 anexaria a stack trace ao console; desligamos para o operador ver so a
+                 mensagem — a stack completa continua indo aos arquivos. -->
+            <PatternLayout pattern="[log    ] %-5level %msg%n" alwaysWriteExceptions="false"/>
         </Console>
+
+        <!-- (a) Arquivo geral rotativo: recebe TODOS os niveis da aplicacao (INFO+),
+             com o registro completo de cada ensaio do inicio ao fim.
+             ignoreExceptions="true" (padrao, explicito aqui): uma falha ao ESCREVER o
+             log nunca sobe como excecao para a thread do ensaio. -->
+        <RollingFile name="ArquivoGeral"
+                     fileName="${LOG_DIR}/ensaios.log"
+                     filePattern="${LOG_DIR}/ensaios-%d{yyyy-MM-dd}-%i.log.gz"
+                     ignoreExceptions="true">
+            <PatternLayout pattern="${PADRAO_ARQUIVO}"/>
+            <Policies>
+                <!-- Rotaciona por dia e tambem quando o arquivo passa de 10 MB. -->
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <!-- (b) Arquivo SO de erros: o ThresholdFilter deixa passar apenas ERROR e acima,
+             para inspecionar rapidamente o que deu errado sem o ruido dos INFO. -->
+        <RollingFile name="ArquivoErros"
+                     fileName="${LOG_DIR}/erros.log"
+                     filePattern="${LOG_DIR}/erros-%d{yyyy-MM-dd}-%i.log.gz"
+                     ignoreExceptions="true">
+            <PatternLayout pattern="${PADRAO_ARQUIVO}"/>
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
     </Appenders>
 
     <Loggers>
+        <!-- Logger da aplicacao: INFO grava o ciclo de vida completo nos arquivos, mas no
+             Console (do operador) so aparecem WARN e ERROR — assim o relatorio formatado do
+             ConsoleObserver nao se mistura a cada marco de INFO. A stack trace vai so aos
+             arquivos. additivity=false para nao duplicar no Root. -->
+        <Logger name="com.fae.calibracao" level="info" additivity="false">
+            <AppenderRef ref="Console" level="warn"/>
+            <AppenderRef ref="ArquivoGeral"/>
+            <AppenderRef ref="ArquivoErros"/>
+        </Logger>
+
         <!-- O Hibernate loga muito em INFO na inicializacao e, quando o banco esta fora,
              despeja o stack trace inteiro da falha de conexao. Como a aplicacao ja trata
-             e reporta essa falha com mensagem propria, silenciamos ate ERROR. -->
+             e reporta essa falha com mensagem propria, silenciamos ate ERROR. Os erros
+             reais do Hibernate ainda vao para os arquivos. -->
         <Logger name="org.hibernate" level="error" additivity="false">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="ArquivoGeral"/>
+            <AppenderRef ref="ArquivoErros"/>
         </Logger>
 
         <!-- O console pertence ao operador do ensaio, entao o SQL fica fora dele: a
@@ -26,6 +84,8 @@
 
         <Root level="warn">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="ArquivoGeral"/>
+            <AppenderRef ref="ArquivoErros"/>
         </Root>
     </Loggers>
 </Configuration>

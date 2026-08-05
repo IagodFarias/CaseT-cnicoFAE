@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<VBox prefHeight="147.0" prefWidth="548.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.constantsDownload.ConstantsDownloadController">
+  <children>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" text="Arquivo Constantes" textAlignment="CENTER" />
+                        <TextField fx:id="textFieldChoosenConstsFile" />
+                        <Label text="Medidor" />
+                        <ComboBox fx:id="comboBoxPosicaoMedidor" onAction="#comboBoxSelectedItem" prefWidth="150.0" visibleRowCount="20" />
+                     </children>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="20.0">
+                     <children>
+                        <Label text="Arquivo Configuração" />
+                        <TextField fx:id="textFieldConfigFile" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="20.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </VBox>
+         </children></AnchorPane>
+      <ToolBar prefHeight="40.0" prefWidth="200.0">
+        <items>
+          <Button fx:id="btnChooseCaliLutFile" mnemonicParsing="false" onAction="#btnLoadConstFileAction" prefHeight="25.0" prefWidth="174.0" text="Escolher Arquivo Constantes" />
+            <Button fx:id="btnChooseConfigFile" mnemonicParsing="false" onAction="#btnChooseConfigFileAction" text="Escolher Arquivo Configuração" />
+            <Button fx:id="btnLoad" mnemonicParsing="false" onAction="#btnLoadAction" prefHeight="25.0" prefWidth="110.0" text="Carregar" />
+        </items>
+      </ToolBar>
+  </children>
+</VBox>

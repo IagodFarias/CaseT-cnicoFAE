@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC 
+"-//Hibernate/Hibernate Configuration DTD//EN" 
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+		<!-- <property name="hibernate.connection.url">jdbc:postgresql://127.0.0.1:5432/fae_factory_pc</property> -->
+		<!-- <property name="hibernate.connection.url">jdbc:postgresql://128.30.30.43:5432/fae_factory_pc</property> -->
+		<!-- <property name="hibernate.connection.password">postgres</property> -->
+		<!-- <property name="hibernate.connection.username">postgres</property> -->
+		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+		<property name="hibernate.show_sql">false</property>
+		<property name="hibernate.format_sql">false</property>
+		<property name="hibernate.hbm2ddl.auto">update</property>
+		<property name="connection.pool_size">1</property>
+		<!-- <property name="hibernate.temp.use_jdbc_metadata_defaults">false</property> -->
+
+
+		<!-- BatchModel -->
+		<mapping class="si.dbcomm.model.BatchModel" />
+
+		<!-- BatchRadioWmBusConfigModel -->
+		<mapping class="si.dbcomm.model.BatchRadioWmBusConfigModel" />
+
+		<!-- BateladaModel -->
+		<mapping class="si.dbcomm.model.BateladaModel" />
+
+		<!-- BenchDataModel -->
+		<mapping class="si.dbcomm.model.BenchDataModel" />
+
+		<!-- CalculatedFixedConstModel -->
+		<mapping class="si.dbcomm.model.CalculatedFixedConstModel" />
+
+		<!-- CalibConstantsModel -->
+		<mapping class="si.dbcomm.model.CalibConstantsModel" />
+
+		<!-- CarcassBatchModel -->
+		<mapping class="si.dbcomm.model.CarcassBatchModel" />
+
+		<!-- ClientModel -->
+		<mapping class="si.dbcomm.model.ClientModel" />
+
+		<!-- ConversorModel -->
+		<mapping class="si.dbcomm.model.ConversorModel" />
+
+		<!-- DimensionalModel -->
+		<mapping class="si.dbcomm.model.DimensionalModel" />
+
+		<!-- DimensionMeasureModel -->
+		<mapping class="si.dbcomm.model.DimensionMeasureModel" />
+
+		<!-- DrawingModel -->
+		<mapping class="si.dbcomm.model.DrawingModel" />
+
+		<!-- FirmwareModel -->
+		<mapping class="si.dbcomm.model.FirmwareModel" />
+
+		<!-- FlowRateModel -->
+		<mapping class="si.dbcomm.model.FlowRateModel" />
+
+		<!-- HumiditySensorModel -->
+		<mapping class="si.dbcomm.model.HumiditySensorModel" />
+
+		<!-- LevelSensorModel -->
+		<mapping class="si.dbcomm.model.LevelSensorModel" />
+
+		<!-- MeterDataModel -->
+		<mapping class="si.dbcomm.model.MeterDataModel" />
+
+		<!-- MeterModel -->
+		<mapping class="si.dbcomm.model.MeterModel" />
+
+		<!-- MeterTypeModel -->
+		<mapping class="si.dbcomm.model.MeterTypeModel" />
+
+		<!-- PidConfigModel -->
+		<mapping class="si.dbcomm.model.PidConfigModel" />
+
+		<!-- PressureSensorModel -->
+		<mapping class="si.dbcomm.model.PressureSensorModel" />
+
+		<!-- ProcessConfigModel -->
+		<mapping class="si.dbcomm.model.ProcessConfigModel" />
+
+		<!-- ProceduraModel -->
+		<mapping class="si.dbcomm.model.ProcedureModel" />
+
+		<!-- ProcessModel -->
+		<mapping class="si.dbcomm.model.ProcessModel" />
+
+		<!-- PumpModel -->
+		<mapping class="si.dbcomm.model.PumpModel" />
+
+		<!-- QaAssuredModel -->
+		<mapping class="si.dbcomm.model.QaAssuredModel" />
+
+		<!-- QuotaModel -->
+		<mapping class="si.dbcomm.model.QuotaModel" />
+
+		<!-- RadioWmBusConfigModel -->
+		<mapping class="si.dbcomm.model.RadioWmBusConfigModel" />
+
+		<!-- RamalModel -->
+		<mapping class="si.dbcomm.model.RamalModel" />
+
+		<!-- RefMeterModel -->
+		<mapping class="si.dbcomm.model.RefMeterModel" />
+
+		<!-- ScaleModel -->
+		<mapping class="si.dbcomm.model.ScaleModel" />
+
+		<!-- TemperatureSensorModel -->
+		<mapping class="si.dbcomm.model.TempSensorModel" />
+
+		<!-- ValveModel -->
+		<mapping class="si.dbcomm.model.ValveModel" />
+
+		<!-- VerificationErrorModel -->
+		<mapping class="si.dbcomm.model.VerificationErrorModel" />
+
+		<!-- VolumeModel -->
+		<mapping class="si.dbcomm.model.VolumeModel" />
+
+		<!-- VolumetricBenchModel -->
+		<mapping class="si.dbcomm.model.VolumetricBenchModel" />
+
+		<!-- VolumetricErrorModel -->
+		<mapping class="si.dbcomm.model.VolumetricErrorModel" />
+
+		<!-- WaterLineModel -->
+		<mapping class="si.dbcomm.model.WaterLineModel" />
+
+		<!-- LogChangeProcessBatchModel -->
+		<mapping class="si.dbcomm.model.LogChangeProcessBatchModel" />
+
+	</session-factory>
+</hibernate-configuration>

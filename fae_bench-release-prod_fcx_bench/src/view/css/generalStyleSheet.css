@@ -1,0 +1,127 @@
+.button_connect_meter {
+	-fx-padding: 1.0;
+}
+ .background-transparent {
+  -fx-background-color: transparent;
+}
+ .dropshadow {
+    -fx-effect: dropshadow(three-pass-box, rgba(0.0,0.0,0.0,0.6), 14.0, 0.1, 0.0, 0.0);
+    -fx-background-radius: 5.0;
+    -fx-background-color: white;
+ 	-fx-padding: 0.0px;
+}
+ .text-field-with-margin {
+    -fx-padding: 0.0px;
+    -fx-border-insets: 0.0px;
+    -fx-background-insets: 0.0px;
+}
+ 
+ .background-color-red {
+  -fx-background-color: #c6422e;
+}
+ .background-color-fae {
+  -fx-background-color: #59adda;
+}
+
+.tab .tab-label{
+  -fx-font-weight: bold;
+  -fx-text-fill: black;
+  -fx-font-size: 12.0;
+  -fx-pref-width: 100.0;
+}
+
+.tab-header-background{
+  -fx-background-color: null;
+}
+
+ .table-column-style {
+  -fx-alignment: CENTER_RIGHT;
+  -fx-background-color: #4682b4;
+}
+
+.bordered-titled-title {
+  -fx-translate-x:  0.0;
+  -fx-translate-y: 0.0;
+  -fx-padding: 0.0 0.0 0.0 0.0;
+  -fx-background-color: -fx-background;
+}
+
+.bordered-button-minimize {
+  -fx-translate-x:  0.0;
+  -fx-translate-y: 0.0;
+  -fx-padding: 0.0 0.0 0.0 0.0;
+}
+
+.bordered-button-close {
+  -fx-translate-x:  0.0;
+  -fx-translate-y: 0.0;
+  -fx-padding: 0.0 0.0 0.0 0.0;
+  -fx-background-color: #ff4b4b;
+}
+
+.bordered-titled-border {
+  -fx-content-display: top;
+  -fx-border-insets: 2.0 0.0 0.0 0.0;
+  -fx-border-color: -fx-text-box-border;
+  -fx-border-width: 2.0;
+}
+
+.bordered-titled-content {
+  -fx-padding: 18.0 5.0 5.0 5.0;
+}
+
+.chart {
+    -fx-padding: 5.0px;
+}
+.chart-content {
+    -fx-padding: 10.0px;    
+}
+ 
+.chart-title {
+  -fx-text-fill: #4682b4;
+  -fx-font-size: 1.6em;
+}
+ 
+.axis-label {
+  -fx-text-fill: #4682b4;
+}
+ 
+.chart-legend {
+   -fx-background-color:  transparent;
+   -fx-padding: 20.0px;
+}
+ 
+.chart-legend-item-symbol{
+   -fx-background-radius: 0.0;
+}
+ 
+.chart-legend-item{
+    -fx-text-fill: #191970;
+}
+ 
+.chart-plot-background {
+    -fx-background-color: #f7f8f9;
+}
+.chart-alternative-row-fill {
+    -fx-fill: #fffcfc;
+    -fx-stroke: transparent;
+    -fx-stroke-width: 0.0;
+}
+.chart-vertical-grid-lines {
+    -fx-stroke: #011f4b;
+}
+.chart-horizontal-grid-lines {
+    -fx-stroke: #011f4b;
+}
+
+.axis {
+    -fx-font-size: 1.0em;    
+    -fx-tick-label-fill: #011f4b;
+    -fx-font-family: Tahoma;
+    -fx-tick-length: 10.0;
+    -fx-minor-tick-length: 10.0;
+}
+ 
+.axis-label {
+   -fx-text-fill: #011f4b; 
+}

@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.processconfig.NewProcessConfigControllerView">
+   <bottom>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <items>
+            <Button fx:id="btnSave" mnemonicParsing="false" onAction="#onActionSave" prefWidth="80.0" text="Save" />
+        </items>
+      </ToolBar>
+   </bottom>
+   <center>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="Process config.">
+               <content>
+                  <HBox spacing="100.0">
+                     <children>
+                        <VBox spacing="30.0">
+                           <children>
+                              <VBox>
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                       <children>
+                                          <Label text="Times">
+                                             <font>
+                                                <Font name="System Bold Italic" size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <VBox alignment="CENTER_LEFT" spacing="20.0">
+                                       <children>
+                                          <HBox alignment="CENTER" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="150.0" text="Purge flow rate:" />
+                                                <TextField fx:id="tfPurgeFlowRate" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="150.0" text="Purge time:" />
+                                                <TextField fx:id="tfPurgeTime" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="150.0" text="Zero flow time:" />
+                                                <TextField fx:id="tfZeroFlowTime" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="150.0" text="Flow time:" />
+                                                <TextField fx:id="tfFlowTime" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="150.0" text="Flow stabilization time:" />
+                                                <TextField fx:id="tfFlowStabilizationTime" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="150.0" text="Flow stability check time:" />
+                                                <TextField fx:id="tfFlowStabilyCheckTime" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="150.0" text="Flow rate timeout:" />
+                                                <TextField fx:id="tfFlowRateTimeout" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets left="20.0" />
+                                       </VBox.margin>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                       <children>
+                                          <Label text="Pump">
+                                             <font>
+                                                <Font name="System Bold Italic" size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <VBox alignment="CENTER_LEFT" spacing="20.0">
+                                       <children>
+                                          <HBox alignment="CENTER" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="150.0" text="Line pressure pump load:" />
+                                                <TextField fx:id="tfLinePressurePumpLoad" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="150.0" text="Time check pressure:" />
+                                                <TextField fx:id="tfTimeCheckPressure" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets left="20.0" />
+                                       </VBox.margin>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                        <VBox spacing="20.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                 <children>
+                                    <Label prefWidth="100.0" text="Zero flow">
+                                       <font>
+                                          <Font name="System Bold Italic" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <CheckBox fx:id="cbZeroFlowEnable" contentDisplay="RIGHT" mnemonicParsing="false" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                 <children>
+                                    <Label prefWidth="100.0" text="Only verification">
+                                       <font>
+                                          <Font name="System Bold Italic" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <CheckBox fx:id="cbOnlyVerification" contentDisplay="RIGHT" mnemonicParsing="false" />
+                                 </children>
+                              </HBox>
+                              <VBox spacing="10.0">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                       <children>
+                                          <Label text="Calib">
+                                             <font>
+                                                <Font name="System Bold Italic" size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <VBox alignment="CENTER_LEFT" spacing="20.0">
+                                       <children>
+                                          <HBox alignment="CENTER" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="200.0" text="Init calib temp:" />
+                                                <TextField fx:id="tfInitCalibTemp" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="200.0" text="Max trim AGC tries:" />
+                                                <TextField fx:id="tfMaxTrimAgcTries" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="200.0" text="Download tries:" />
+                                                <TextField fx:id="tfDownloadTries" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets left="20.0" />
+                                       </VBox.margin>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                              <VBox spacing="10.0">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                       <children>
+                                          <Label text="Matfile">
+                                             <font>
+                                                <Font name="System Bold Italic" size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <VBox alignment="CENTER_LEFT" spacing="20.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="200.0" text="Save matdata:" />
+                                                <CheckBox fx:id="cbSaveMatData" mnemonicParsing="false" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="200.0" text="Save matdata reproved meters:" />
+                                                <CheckBox fx:id="cbSaveMatDataReprovedMeters" mnemonicParsing="false" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="200.0" text="Save matdata calib lut:" />
+                                                <CheckBox fx:id="cbSaveMatDataCalibLut" mnemonicParsing="false" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets left="20.0" />
+                                       </VBox.margin>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                              <VBox spacing="10.0">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                       <children>
+                                          <Label text="Sizes">
+                                             <font>
+                                                <Font name="System Bold Italic" size="12.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <VBox alignment="CENTER_LEFT" spacing="20.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="200.0" text="Flow buff size" />
+                                                <TextField fx:id="tfFlowBuffSize" />
+                                             </children>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                             <children>
+                                                <Label prefWidth="200.0" text="Window size" />
+                                                <TextField fx:id="tfWindowSize" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets left="20.0" />
+                                       </VBox.margin>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="20.0" left="50.0" right="20.0" top="20.0" />
+                     </padding>
+                  </HBox>
+               </content>
+            </Tab>
+            <Tab text="Flow rate calibration">
+               <content>
+                  <VBox>
+                     <children>
+                        <HBox>
+                           <children>
+                              <Label prefWidth="100.0" text="Calibration">
+                                 <font>
+                                    <Font name="System Bold Italic" size="12.0" />
+                                 </font>
+                              </Label>
+                              <CheckBox fx:id="cbFlowRateCalib" mnemonicParsing="false" onAction="#onFlowRateEnable" />
+                           </children>
+                           <VBox.margin>
+                              <Insets left="20.0" />
+                           </VBox.margin>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </HBox>
+                        <TableView id="batchTable" fx:id="flowRateTableCalib" styleClass="table-column-style" stylesheets="@../css/generalStyleSheet.css" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                           <columns>
+                              <TableColumn fx:id="columnFlowRateCalib" prefWidth="100.0" text="Flow rate" />
+                              <TableColumn fx:id="columnDescriptionCalib" prefWidth="400.0" text="Description" />
+                              <TableColumn fx:id="columnUpperLimitCalib" prefWidth="100.0" text="Upper limit" />
+                              <TableColumn fx:id="columnLowerLimitCalib" prefWidth="100.0" text="Lower limit" />
+                              <TableColumn fx:id="columnRamalCalib" prefWidth="100.0" text="Ramal" />
+                              <TableColumn fx:id="columnRefMeterCalib" prefWidth="100.0" text="Ref. meter" />
+                              <TableColumn fx:id="columnPumpCalib" prefWidth="100.0" text="Pump" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab text="Flow rate verification">
+               <content>
+                  <VBox>
+                     <children>
+                        <HBox>
+                           <children>
+                              <Label prefWidth="100.0" text="Verification">
+                                 <font>
+                                    <Font name="System Bold Italic" size="12.0" />
+                                 </font>
+                              </Label>
+                              <CheckBox fx:id="cbFlowRateVerif" mnemonicParsing="false" onAction="#onFlowRateEnable" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets left="20.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <TableView id="batchTable" fx:id="flowRateTableVerific" styleClass="table-column-style" stylesheets="@../css/generalStyleSheet.css" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                           <columns>
+                              <TableColumn fx:id="columnFlowRateVerific" prefWidth="100.0" text="Flow rate" />
+                              <TableColumn fx:id="columnDescriptionVerific" prefWidth="400.0" text="Description" />
+                              <TableColumn fx:id="columnUpperLimitVerific" prefWidth="100.0" text="Upper limit" />
+                              <TableColumn fx:id="columnLowerLimitVerific" prefWidth="100.0" text="Lower limit" />
+                              <TableColumn fx:id="columnRamalVerific" prefWidth="100.0" text="Ramal" />
+                              <TableColumn fx:id="columnRefMeterVerific" prefWidth="100.0" text="Ref. meter" />
+                              <TableColumn fx:id="columnPumpVerific" prefWidth="100.0" text="Pump" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+</BorderPane>

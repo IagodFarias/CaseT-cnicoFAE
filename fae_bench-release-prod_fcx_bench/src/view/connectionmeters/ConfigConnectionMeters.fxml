@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.*?>
+<?import eu.hansolo.medusa.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.connectionmeters.ConfigConnectionMeters">
+   <children>
+      <BorderPane fx:id="root" layoutX="102.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <bottom>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+              <items>
+                  <Button alignment="CENTER" contentDisplay="CENTER" minWidth="100.0" mnemonicParsing="false" onAction="#onActionSaveButton" text="Salvar" textAlignment="CENTER" />
+              </items>
+            </ToolBar>
+         </bottom>
+         <center>
+            <VBox BorderPane.alignment="CENTER">
+               <children>
+                  <HBox>
+                     <children>
+                        <Label text="Habilitar posições" />
+                     </children>
+                  </HBox>
+                  <GridPane>
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="30.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="30.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <CheckBox fx:id="cbPos10" mnemonicParsing="false" text="Posição 10" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <CheckBox fx:id="cbPos01" mnemonicParsing="false" text="Posição 01" GridPane.columnIndex="1" />
+                        <CheckBox fx:id="cbPos02" mnemonicParsing="false" text="Posição 02" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <CheckBox fx:id="cbPos03" mnemonicParsing="false" text="Posição 03" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <CheckBox fx:id="cbPos04" mnemonicParsing="false" text="Posição 04" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <CheckBox fx:id="cbPos05" mnemonicParsing="false" text="Posição 05" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <CheckBox fx:id="cbPos06" mnemonicParsing="false" text="Posição 06" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <CheckBox fx:id="cbPos07" mnemonicParsing="false" text="Posição 07" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <CheckBox fx:id="cbPos08" mnemonicParsing="false" text="Posição 08" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <CheckBox fx:id="cbPos09" mnemonicParsing="false" text="Posição 09" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <CheckBox fx:id="cbPos11" mnemonicParsing="false" text="Posição 11" GridPane.columnIndex="3" GridPane.rowIndex="9" />
+                        <CheckBox fx:id="cbPos12" mnemonicParsing="false" text="Posição 12" GridPane.columnIndex="3" GridPane.rowIndex="8" />
+                        <CheckBox fx:id="cbPos13" mnemonicParsing="false" text="Posição 13" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+                        <CheckBox fx:id="cbPos14" mnemonicParsing="false" text="Posição 14" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+                        <CheckBox fx:id="cbPos15" mnemonicParsing="false" text="Posição 15" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                        <CheckBox fx:id="cbPos16" mnemonicParsing="false" text="Posição 16" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                        <CheckBox fx:id="cbPos17" mnemonicParsing="false" text="Posição 17" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <CheckBox fx:id="cbPos18" mnemonicParsing="false" text="Posição 18" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <CheckBox fx:id="cbPos19" mnemonicParsing="false" text="Posição 19" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <CheckBox fx:id="cbPos20" mnemonicParsing="false" text="Posição 20" GridPane.columnIndex="3" />
+                     </children>
+                  </GridPane>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

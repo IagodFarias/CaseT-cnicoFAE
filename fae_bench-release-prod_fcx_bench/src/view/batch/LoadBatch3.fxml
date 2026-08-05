@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.*?>
+<?import eu.hansolo.medusa.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="root" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.batch.LoadBatchControllerView">
+   <children>
+      <BorderPane layoutX="102.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <bottom>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+              <items>
+                  <Button fx:id="btnAction" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onActionNewButton" prefWidth="200.0" text="Novo" textAlignment="CENTER" />
+                  <Label fx:id="labelUserMsg" text="Label" textFill="RED">
+                     <padding>
+                        <Insets left="30.0" />
+                     </padding>
+                     <font>
+                        <Font name="System Bold Italic" size="12.0" />
+                     </font>
+                  </Label>
+              </items>
+            </ToolBar>
+         </bottom>
+         <center>
+            <VBox BorderPane.alignment="CENTER">
+               <children>
+                  <HBox spacing="10.0">
+                     <children>
+                        <HBox styleClass="bordered-titled-border" stylesheets="@../css/generalStyleSheet.css">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                                 <children>
+                                    <CheckBox mnemonicParsing="false" text="CheckBox" />
+                                    <CheckBox mnemonicParsing="false" text="CheckBox" />
+                                    <CheckBox mnemonicParsing="false" text="CheckBox" />
+                                    <CheckBox mnemonicParsing="false" text="CheckBox" />
+                                    <RadioButton mnemonicParsing="false" text="RadioButton">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="toggle" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton mnemonicParsing="false" text="RadioButton" toggleGroup="$toggle" />
+                                    <RadioButton mnemonicParsing="false" text="RadioButton" toggleGroup="$toggle" />
+                                    <RadioButton mnemonicParsing="false" text="RadioButton" toggleGroup="$toggle" />
+                                    <RadioButton mnemonicParsing="false" text="RadioButton" toggleGroup="$toggle" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <HBox styleClass="bordered-titled-border" stylesheets="@../css/generalStyleSheet.css">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <VBox spacing="10.0">
+                                 <children>
+                                    <VBox spacing="10.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                             <children>
+                                                <Label text="Detail">
+                                                   <font>
+                                                      <Font name="System Bold Italic" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </HBox>
+                                          <VBox alignment="CENTER_LEFT" maxWidth="600.0" minWidth="600.0" spacing="10.0">
+                                             <children>
+                                                <HBox spacing="80.0">
+                                                   <children>
+                                                      <VBox spacing="10.0">
+                                                         <children>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Radio wM-Bus" />
+                                                                  <CheckBox fx:id="cbRadioWmBus" disable="true" mnemonicParsing="false" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Number of meters" />
+                                                                  <Label fx:id="lbNumberOfMeters" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Start seq." />
+                                                                  <Label fx:id="lbStartSeq" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Last assigned serial seq." />
+                                                                  <Label fx:id="lbLastAssignedSerialSeq" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Left produce" />
+                                                                  <Label fx:id="lbLeftProduce" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Manufacturer code" />
+                                                                  <Label fx:id="lbManufacturerCode" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Year of manufacture" />
+                                                                  <Label fx:id="lbYearOfManufacture" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Client" />
+                                                                  <Label fx:id="lbClient" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                         </children>
+                                                      </VBox>
+                                                      <VBox fx:id="vbWmbbusConfig" spacing="10.0">
+                                                         <children>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="wM-Bus config.">
+                                                                     <font>
+                                                                        <Font name="System Bold" size="12.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Start seq." />
+                                                                  <Label fx:id="lbStartSeqRadio" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Last assigned serial seq." />
+                                                                  <Label fx:id="lbLastAssignedSerialSeqRadio" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Left produce" />
+                                                                  <Label fx:id="lbLeftProduceRadio" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Manufacturer number" />
+                                                                  <Label fx:id="lbManufacturerNumberRadio" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Product code" />
+                                                                  <Label fx:id="lbProductCodeRadio" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Version" />
+                                                                  <Label fx:id="lbVersionRadio" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                               <children>
+                                                                  <Label prefWidth="150.0" text="Transmit interval" />
+                                                                  <Label fx:id="lbTransmitIntervalRadio" text="-" />
+                                                               </children>
+                                                            </HBox>
+                                                         </children>
+                                                      </VBox>
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER_LEFT" spacing="20.0">
+                                                   <children>
+                                                      <Label maxWidth="150.0" minWidth="150.0" prefWidth="150.0" text="Meter type" />
+                                                      <Label fx:id="lbMeterType" text="-" wrapText="true" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets left="20.0" />
+                                             </VBox.margin>
+                                          </VBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </VBox>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

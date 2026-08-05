@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.flowrate.SelectFlowRate">
+   <bottom>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <items>
+          <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#onActionCancel" prefWidth="80.0" text="Fechar" />
+            <Button fx:id="btnSalvar" mnemonicParsing="false" onAction="#onActionSalvar" prefWidth="80.0" text="Salvar" />
+            <Button fx:id="btnAdd" mnemonicParsing="false" onAction="#onActionAdicionar" prefWidth="80.0" text="Adicionar" />
+        </items>
+      </ToolBar>
+   </bottom>
+   <center>
+      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="Config. Processo">
+               <content>
+                  <Pane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <Pane layoutX="10.0" layoutY="30.0" prefHeight="200.0" prefWidth="1180.0" styleClass="bordered-titled-border" stylesheets="@../css/generalStyleSheet.css">
+                           <children>
+                              <Label layoutX="47.0" layoutY="33.0" text="Vazão de Purga" />
+                              <TextField layoutX="47.0" layoutY="56.0" />
+                              <TextField layoutX="601.0" layoutY="56.0" />
+                              <Label layoutX="601.0" layoutY="33.0" text="Tempo de Purga" />
+                              <TextField layoutX="307.0" layoutY="56.0" />
+                              <Label layoutX="307.0" layoutY="33.0" text="Tempo de estabilização da vazão" />
+                              <Label layoutX="899.0" layoutY="33.0" text="Tempo de vazão zero" />
+                              <TextField layoutX="899.0" layoutY="56.0" />
+                              <CheckBox layoutX="52.0" layoutY="123.0" mnemonicParsing="false" text="Salva MatData" />
+                           </children>
+                        </Pane>
+                     </children>
+                  </Pane>
+               </content>
+            </Tab>
+          <Tab text="Vazões de Calib.">
+               <content>
+                  <TableView id="batchTable" fx:id="flowRateTableCalib" onMouseClicked="#onTableCalibMouseClicked" prefHeight="200.0" prefWidth="200.0" styleClass="table-column-style" stylesheets="@../css/generalStyleSheet.css" tableMenuButtonVisible="true" BorderPane.alignment="CENTER">
+              <columns>
+                <TableColumn fx:id="columnFlowRateCalib" prefWidth="100.0" text="Vazão" />
+                <TableColumn fx:id="columnDescriptionCalib" prefWidth="400.0" text="Descriçao" />
+                  <TableColumn fx:id="columnUpperLimitCalib" prefWidth="100.0" text="Limite Sup." />
+                  <TableColumn fx:id="columnLowerLimitCalib" prefWidth="100.0" text="Limite Inf." />
+                  <TableColumn fx:id="columnRamalCalib" prefWidth="100.0" text="Ramal" />
+                  <TableColumn fx:id="columnRefMeterCalib" prefWidth="100.0" text="Med. referencia" />
+                  <TableColumn fx:id="columnPumpCalib" prefWidth="100.0" text="Bomba" />
+              </columns>
+            </TableView>
+               </content>
+            </Tab>
+            <Tab text="Vazões de Verific.">
+               <content>
+                  <TableView id="batchTable" fx:id="flowRateTableVerific" onMouseClicked="#onTableVerificMouseClicked" prefHeight="200.0" prefWidth="200.0" styleClass="table-column-style" stylesheets="@../css/generalStyleSheet.css" tableMenuButtonVisible="true" BorderPane.alignment="CENTER">
+              <columns>
+                <TableColumn fx:id="columnFlowRateVerific" prefWidth="100.0" text="Vazão" />
+                <TableColumn fx:id="columnDescriptionVerific" prefWidth="400.0" text="Descriçao" />
+                  <TableColumn fx:id="columnUpperLimitVerific" prefWidth="100.0" text="Limite Sup." />
+                  <TableColumn fx:id="columnLowerLimitVerific" prefWidth="100.0" text="Limite Inf." />
+                  <TableColumn fx:id="columnRamalVerific" prefWidth="100.0" text="Ramal" />
+                  <TableColumn fx:id="columnRefMeterVerific" prefWidth="100.0" text="Med. referencia" />
+                  <TableColumn fx:id="columnPumpVerific" prefWidth="100.0" text="Bomba" />
+              </columns>
+            </TableView>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+</BorderPane>

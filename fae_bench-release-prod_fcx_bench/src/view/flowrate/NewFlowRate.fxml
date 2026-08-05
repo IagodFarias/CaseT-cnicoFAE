@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane fx:id="root" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.flowrate.NewFlowRateControllerView">
+	<center>
+		<TabPane maxHeight="1.7976931348623157E308" prefHeight="600.0" prefWidth="700.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+			<tabs>
+				<Tab text="Vazão">
+					<content>
+						<Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+							<children>
+								<Pane layoutX="10.0" layoutY="24.0" maxWidth="1.7976931348623157E308" prefHeight="157.0" prefWidth="680.0" styleClass="bordered-titled-border" stylesheets="@../css/generalStyleSheet.css">
+									<children>
+										<Label alignment="CENTER_RIGHT" layoutX="531.0" layoutY="28.0" text="Limite Inferior" />
+										<TextField fx:id="textfieldLowerLimit" layoutX="531.0" layoutY="45.0" onKeyReleased="#onFieldFocusValidadeNumeric" prefHeight="25.0" prefWidth="107.0" />
+										<TextField fx:id="textfieldUpperLimit" layoutX="278.0" layoutY="45.0" onKeyReleased="#onFieldFocusValidadeNumeric" prefHeight="25.0" prefWidth="107.0" />
+										<Label alignment="CENTER_RIGHT" layoutX="278.0" layoutY="28.0" text="Limite Superior" />
+										<TextField fx:id="textFieldDescription" layoutX="20.0" layoutY="105.0" prefHeight="25.0" prefWidth="619.0" />
+										<Label layoutX="20.0" layoutY="88.0" text="Descrição" />
+										<TextField fx:id="textfieldFlowRate" layoutX="20.0" layoutY="45.0" onKeyReleased="#onFieldFocusValidadeNumeric" prefHeight="25.0" prefWidth="107.0" />
+										<Label layoutX="20.0" layoutY="28.0" text="Valor" />
+										<Label layoutX="20.0" layoutY="-7.0" text="Vazão" />
+									</children>
+								</Pane>
+								<Pane layoutX="10.0" layoutY="214.0" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="680.0" styleClass="bordered-titled-border" stylesheets="@../css/generalStyleSheet.css">
+									<children>
+										<Label alignment="CENTER_RIGHT" layoutX="534.0" layoutY="34.0" text="Ganho Derivativo (kd)" />
+										<TextField fx:id="textfieldKd" layoutX="534.0" layoutY="51.0" onKeyReleased="#onFieldFocusValidadeNumeric" prefHeight="25.0" prefWidth="107.0" />
+										<TextField fx:id="textfieldKi" layoutX="284.0" layoutY="51.0" onKeyReleased="#onFieldFocusValidadeNumeric" prefHeight="25.0" prefWidth="107.0" />
+										<Label alignment="CENTER_RIGHT" layoutX="284.0" layoutY="34.0" text="Ganho Integral (ki)" />
+										<TextField fx:id="textfieldKp" layoutX="20.0" layoutY="51.0" onKeyReleased="#onFieldFocusValidadeNumeric" prefHeight="25.0" prefWidth="107.0" />
+										<Label layoutX="20.0" layoutY="34.0" text="Ganho Proporcional (kp)" />
+										<Label layoutX="20.0" layoutY="-7.0" text="Controlador PID" />
+									</children>
+								</Pane>
+							</children>
+						</Pane>
+					</content>
+				</Tab>
+				<Tab text="Ramal">
+					<content>
+						<Pane prefHeight="200.0" prefWidth="200.0">
+							<children>
+								<ImageView fitHeight="486.0" fitWidth="641.0" layoutX="5.0">
+									<image>
+										<Image url="@../../../rsrc/images/ramal.png" />
+									</image>
+								</ImageView>
+								<RadioButton fx:id="radioButtonRm01" layoutX="35.0" layoutY="285.0" mnemonicParsing="false" text="RM 01">
+									<toggleGroup>
+										<ToggleGroup fx:id="ramalGroupRadioButton" />
+									</toggleGroup>
+								</RadioButton>
+								<RadioButton fx:id="radioButtonRm02" layoutX="101.0" layoutY="285.0" mnemonicParsing="false" text="RM 02" toggleGroup="$ramalGroupRadioButton" />
+								<RadioButton fx:id="radioButtonRm03" layoutX="166.0" layoutY="285.0" mnemonicParsing="false" text="RM 03" toggleGroup="$ramalGroupRadioButton" />
+								<RadioButton fx:id="radioButtonRm04" layoutX="231.0" layoutY="286.0" mnemonicParsing="false" text="RM 04" toggleGroup="$ramalGroupRadioButton" />
+								<RadioButton fx:id="radioButtonRm05" layoutX="297.0" layoutY="285.0" mnemonicParsing="false" text="RM 05" toggleGroup="$ramalGroupRadioButton" />
+								<RadioButton fx:id="radioButtonRm06" layoutX="362.0" layoutY="286.0" mnemonicParsing="false" text="RM 06" toggleGroup="$ramalGroupRadioButton" />
+								<RadioButton fx:id="radioButtonRm07" layoutX="427.0" layoutY="286.0" mnemonicParsing="false" text="RM 07" toggleGroup="$ramalGroupRadioButton" />
+								<RadioButton fx:id="radioButtonRm08" layoutX="493.0" layoutY="285.0" mnemonicParsing="false" text="RM 08" toggleGroup="$ramalGroupRadioButton" />
+								<RadioButton fx:id="radioButtonRm09" layoutX="558.0" layoutY="285.0" mnemonicParsing="false" text="RM 09" toggleGroup="$ramalGroupRadioButton" />
+								<RadioButton fx:id="radioButtonRm10" layoutX="622.0" layoutY="285.0" mnemonicParsing="false" text="RM 10" toggleGroup="$ramalGroupRadioButton" />
+								<Label fx:id="labalMaxRm01" layoutX="35.0" layoutY="230.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMinRm01" layoutX="35.0" layoutY="242.0" text="300" textFill="RED" />
+								<Label fx:id="labalMinRm02" layoutX="101.0" layoutY="242.0" text="300" textFill="RED" />
+								<Label fx:id="labalMaxRm02" layoutX="101.0" layoutY="230.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMinRm03" layoutX="165.0" layoutY="242.0" text="300" textFill="RED" />
+								<Label fx:id="labalMaxRm03" layoutX="165.0" layoutY="230.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMinRm04" layoutX="232.0" layoutY="242.0" text="300" textFill="RED" />
+								<Label fx:id="labalMaxRm04" layoutX="232.0" layoutY="230.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMinRm05" layoutX="296.0" layoutY="242.0" text="300" textFill="RED" />
+								<Label fx:id="labalMaxRm05" layoutX="296.0" layoutY="230.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMaxRm06" layoutX="362.0" layoutY="230.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMinRm06" layoutX="362.0" layoutY="242.0" text="300" textFill="RED" />
+								<Label fx:id="labalMaxRm07" layoutX="427.0" layoutY="230.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMinRm07" layoutX="427.0" layoutY="242.0" text="300" textFill="RED" />
+								<Label fx:id="labalMaxRm08" layoutX="493.0" layoutY="230.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMinRm08" layoutX="493.0" layoutY="242.0" text="300" textFill="RED" />
+								<Label fx:id="labalMaxRm09" layoutX="558.0" layoutY="230.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMinRm09" layoutX="558.0" layoutY="242.0" text="300" textFill="RED" />
+								<Label fx:id="labalMaxRm10" layoutX="624.0" layoutY="230.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMinRm10" layoutX="624.0" layoutY="242.0" text="300" textFill="RED" />
+								<Pane layoutX="406.0" layoutY="20.0" prefHeight="78.0" prefWidth="254.0" styleClass="bordered-titled-border" stylesheets="@../css/generalStyleSheet.css">
+									<children>
+										<Label layoutX="10.0" layoutY="19.0" text="Vazão máxima suportada pelo ramal (litros)" textFill="#006aff" />
+										<Label layoutX="10.0" layoutY="39.0" text="Vazão mínima suportada pelo ramal (litros)" textFill="RED" />
+										<Label layoutX="20.0" layoutY="-7.0" text="Legenda" />
+									</children>
+									<padding>
+										<Insets bottom="10.0" right="10.0" top="10.0" />
+									</padding>
+								</Pane>
+							</children>
+						</Pane>
+					</content>
+				</Tab>
+				<Tab text="Medidor de referência">
+					<content>
+						<Pane prefHeight="200.0" prefWidth="200.0">
+							<children>
+								<ImageView fitHeight="348.0" fitWidth="358.0" layoutX="138.0" layoutY="91.0" preserveRatio="true">
+									<image>
+										<Image url="@../../../rsrc/images/refmeter.png" />
+									</image>
+								</ImageView>
+								<RadioButton fx:id="radioButtonRefMeter01" layoutX="186.0" layoutY="255.0" mnemonicParsing="false" text="MR 01">
+									<toggleGroup>
+										<ToggleGroup fx:id="refMeterGroupRadioButton" />
+									</toggleGroup>
+								</RadioButton>
+								<RadioButton fx:id="radioButtonRefMeter02" layoutX="317.0" layoutY="255.0" mnemonicParsing="false" text="MR 02" toggleGroup="$refMeterGroupRadioButton" />
+								<RadioButton fx:id="radioButtonRefMeter03" layoutX="448.0" layoutY="255.0" mnemonicParsing="false" text="MR 03" toggleGroup="$refMeterGroupRadioButton" />
+								<Label fx:id="labalMaxRefMeter01" layoutX="195.0" layoutY="210.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMinRefMeter01" layoutX="195.0" layoutY="225.0" text="300" textFill="RED" />
+								<Label fx:id="labalMinRefMeter02" layoutX="320.0" layoutY="225.0" text="300" textFill="RED" />
+								<Label fx:id="labalMaxRefMeter02" layoutX="320.0" layoutY="210.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMaxRefMeter03" layoutX="450.0" layoutY="210.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMinRefMeter03" layoutX="450.0" layoutY="225.0" text="300" textFill="RED" />
+								<Pane layoutX="406.0" layoutY="20.0" prefHeight="78.0" prefWidth="254.0" styleClass="bordered-titled-border" stylesheets="@../css/generalStyleSheet.css">
+									<children>
+										<Label layoutX="10.0" layoutY="19.0" text="Vazão máxima suportada pelo ramal (litros)" textFill="#006aff" />
+										<Label layoutX="10.0" layoutY="39.0" text="Vazão mínima suportada pelo ramal (litros)" textFill="RED" />
+										<Label layoutX="20.0" layoutY="-7.0" text="Legenda" />
+									</children>
+									<padding>
+										<Insets bottom="10.0" right="10.0" top="10.0" />
+									</padding>
+								</Pane>
+							</children>
+						</Pane>
+					</content>
+				</Tab>
+				<Tab text="Bomba">
+					<content>
+						<Pane prefHeight="200.0" prefWidth="200.0">
+							<children>
+								<Pane layoutX="406.0" layoutY="20.0" prefHeight="78.0" prefWidth="254.0" styleClass="bordered-titled-border" stylesheets="@../css/generalStyleSheet.css">
+									<children>
+										<Label layoutX="10.0" layoutY="19.0" text="Vazão máxima suportada pela bomba (litros)" textFill="#006aff" />
+										<Label layoutX="10.0" layoutY="39.0" text="Vazão mínima suportada pela bomba (litros)" textFill="RED" />
+										<Label layoutX="20.0" layoutY="-7.0" text="Legenda" />
+									</children>
+									<padding>
+										<Insets bottom="10.0" right="10.0" top="10.0" />
+									</padding>
+								</Pane>
+								<ImageView fitHeight="200.0" fitWidth="53.0" layoutX="152.0" layoutY="166.0">
+									<image>
+										<Image url="@../../../rsrc/images/pump.png" />
+									</image>
+								</ImageView>
+								<RadioButton fx:id="radioButtonPump01" layoutX="198.0" layoutY="258.0" mnemonicParsing="false" text="BM 01">
+									<toggleGroup>
+										<ToggleGroup fx:id="pumpGroupRadioButton" />
+									</toggleGroup>
+								</RadioButton>
+								<Label fx:id="labalMinPump01" layoutX="204.0" layoutY="228.0" text="300" textFill="RED" />
+								<Label fx:id="labalMaxPump01" layoutX="204.0" layoutY="208.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMaxPump02" layoutX="336.0" layoutY="208.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMinPump02" layoutX="336.0" layoutY="228.0" text="300" textFill="RED" />
+								<RadioButton fx:id="radioButtonPump02" layoutX="330.0" layoutY="258.0" mnemonicParsing="false" text="BM 02" toggleGroup="$pumpGroupRadioButton" />
+								<ImageView fitHeight="200.0" fitWidth="53.0" layoutX="284.0" layoutY="166.0">
+									<image>
+										<Image url="@../../../rsrc/images/pump.png" />
+									</image>
+								</ImageView>
+								<Label fx:id="labalMaxPump03" layoutX="469.0" layoutY="208.0" text="1500" textFill="#006aff" />
+								<Label fx:id="labalMinPump03" layoutX="469.0" layoutY="228.0" text="300" textFill="RED" />
+								<RadioButton fx:id="radioButtonPump03" layoutX="463.0" layoutY="258.0" mnemonicParsing="false" text="BM 03" toggleGroup="$pumpGroupRadioButton" />
+								<ImageView fitHeight="200.0" fitWidth="53.0" layoutX="417.0" layoutY="166.0">
+									<image>
+										<Image url="@../../../rsrc/images/pump.png" />
+									</image>
+								</ImageView>
+							</children>
+						</Pane>
+					</content>
+				</Tab>
+			</tabs>
+		</TabPane>
+	</center>
+	<bottom>
+		<Pane prefHeight="60.0" prefWidth="700.0" BorderPane.alignment="CENTER">
+			<children>
+				<ToolBar layoutY="26.0" maxWidth="1.7976931348623157E308" prefWidth="700.0">
+					<items>
+						<Button fx:id="btnCancel" mnemonicParsing="false" onAction="#onActionCancelButton" prefWidth="80.0" text="Fechar" />
+						<Button fx:id="btnSalvar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onActionSalvar" prefWidth="80.0" text="Salvar" />
+						<Label fx:id="labelRequiredFields" text="* Todos os campos são obrigatórios" textFill="RED">
+							<font>
+								<Font name="System Bold Italic" size="12.0" />
+							</font>
+							<opaqueInsets>
+								<Insets />
+							</opaqueInsets>
+							<padding>
+								<Insets left="30.0" />
+							</padding>
+						</Label>
+					</items>
+				</ToolBar>
+			</children>
+		</Pane>
+	</bottom>
+</BorderPane>

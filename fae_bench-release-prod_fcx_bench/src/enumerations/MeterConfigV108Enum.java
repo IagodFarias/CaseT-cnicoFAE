@@ -1,0 +1,118 @@
+package enumerations;
+
+public enum MeterConfigV108Enum {
+
+	METER_CONF_MAJOR(0, 2),
+	METER_CONF_MINOR(2, 2),
+	METER_CONF_PATCH(4, 2),
+	METER_CONF_BUILD(6, 2),
+
+	METER_CONF_CALIB_DATE(8, 8),
+//	METER_CONF_SERIAL_NUM(16, 12),
+	METER_CONF_SERIAL_NUM_1(16, 4),
+	METER_CONF_SERIAL_NUM_2(20, 4),
+	METER_CONF_SERIAL_NUM_3(24, 4),
+
+	METER_CONF_LEN(28, 8),
+	METER_CONF_DIA(36, 8),
+	METER_CONF_AREA(44, 8),
+
+	METER_CONF_DSOS(52, 8),
+	METER_CONF_DZC(60, 8),
+
+	METER_CONF_LUT(68, 60),
+	METER_CONF_LUT_R(-1, 8),
+	METER_CONF_LUT_k(-2, 8),
+
+	METER_CONF_SIZE(548, 2),
+
+	METER_CONF_LOOPC(550, 2),
+	METER_CONF_SMARK(552, 2),
+	METER_CONF_SPACE(554, 2),
+	METER_CONF_ANA_SAMPLE(556, 2),
+	METER_CONF_PRE_MEAS_D_CAL(558, 2),
+	METER_CONF_PRE_MEAS_D0(560, 2),
+	METER_CONF_PRE_MEAS_D1(562, 2),
+	METER_CONF_INIT_PULSE_D(564, 2),
+	METER_CONF_LAST_PULSE_D(566, 2),
+	METER_CONF_REF_CONFIG(568, 2),
+
+	METER_CONF_STAGE1_AUTO_R1(570, 2),
+	METER_CONF_STAGE1_AUTO_GM1(572, 2),
+	METER_CONF_STAGE1_CONF_MIN_R1(574, 2),
+	METER_CONF_STAGE1_CONF_MIN_GM1(576, 2),
+	METER_CONF_STAGE1_CONF_LOWEST(578, 2),
+	METER_CONF_STAGE1_CONF_R1_SEARCH(580, 2),
+	METER_CONF_STAGE1_CONF_GM1_SEARCH(582, 2),
+	METER_CONF_STAGE2_A2(584, 2),
+	METER_CONF_STAGE2_R2(586, 2),
+	METER_CONF_OTHER_SEL_HP(588, 2),
+	METER_CONF_OTHER_SEL_PAD_BP(590, 2),
+	METER_CONF_PTRIG_LEV(592, 2),
+	METER_CONF_PTRIG_LEV_LOW(594, 2),
+	METER_CONF_PTRIG_LEV_HIGH(596, 2),
+
+	METER_CONF_PCONFIG(598, 2),
+	METER_CONF_PCONFIG0(600, 2),
+	METER_CONF_PCONFIG1(602, 2),
+	METER_CONF_PCONFIG2(604, 2),
+	METER_CONF_PCONFIG3(606, 2),
+
+	METER_CONF_EXC_LEN(608, 2),
+	METER_CONF_EXC_CONFIG_SEL_N70(610, 2),
+	METER_CONF_MSEQ_LEVEL(612, 2),
+	METER_CONF_MSEQ_ENABLE(614, 2),
+
+	METER_CONF_PULSE_K(616, 8),
+
+	METER_CONF_RESOLUTION(624, 2),
+
+	METER_CONF_LOG_INTERVAL(626, 1),
+	METER_CONF_WEEKDAY(627, 1),
+
+	METER_CONF_WMBUS_SERIAL_NUM(628, 8),
+	METER_CONF_WMBUS_CIPHERKEY_1(636, 8),
+	METER_CONF_WMBUS_CIPHERKEY_2(644, 8),
+	METER_CONF_WMBUS_INTERVAL(652, 2);
+
+	private int meterConfigEnum;
+	private int numByte;
+
+	private MeterConfigV108Enum(int configEnum, int value) {
+		meterConfigEnum = configEnum;
+		numByte = value;
+	}
+
+	private MeterConfigV108Enum(int configEnum) {
+		meterConfigEnum = configEnum;
+	}
+
+	public int getMeterConfigEnum() {
+		return meterConfigEnum;
+	}
+
+	public int getNumByte() {
+		return numByte;
+	}
+
+	public static int getSize() {
+		return 654;
+		// return MeterConfigV108Enum.METER_CONF_LUT.getNumByte() + MeterConfigV108Enum.METER_CONF_MAJOR.getNumByte() + MeterConfigV108Enum.METER_CONF_MINOR.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_PATCH.getNumByte() + MeterConfigV108Enum.METER_CONF_CALIB_DATE.getNumByte() + MeterConfigV108Enum.METER_CONF_LEN.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_SERIAL_NUM.getNumByte() + MeterConfigV108Enum.METER_CONF_DIA.getNumByte() + MeterConfigV108Enum.METER_CONF_AREA.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_DSOS.getNumByte() + MeterConfigV108Enum.METER_CONF_DZC.getNumByte() + MeterConfigV108Enum.METER_CONF_SIZE.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_LOOPC.getNumByte() + MeterConfigV108Enum.METER_CONF_SMARK.getNumByte() + MeterConfigV108Enum.METER_CONF_SPACE.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_ANA_SAMPLE.getNumByte() + MeterConfigV108Enum.METER_CONF_PRE_MEAS_D_CAL.getNumByte() + MeterConfigV108Enum.METER_CONF_PRE_MEAS_D0.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_PRE_MEAS_D1.getNumByte() + MeterConfigV108Enum.METER_CONF_INIT_PULSE_D.getNumByte() + MeterConfigV108Enum.METER_CONF_LAST_PULSE_D.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_REF_CONFIG.getNumByte() + MeterConfigV108Enum.METER_CONF_STAGE1_AUTO_R1.getNumByte() + MeterConfigV108Enum.METER_CONF_STAGE1_AUTO_GM1.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_STAGE1_CONF_MIN_R1.getNumByte() + MeterConfigV108Enum.METER_CONF_STAGE1_CONF_MIN_GM1.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_STAGE1_CONF_LOWEST.getNumByte() + MeterConfigV108Enum.METER_CONF_STAGE1_CONF_R1_SEARCH.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_STAGE1_CONF_GM1_SEARCH.getNumByte() + MeterConfigV108Enum.METER_CONF_STAGE2_A2.getNumByte() + MeterConfigV108Enum.METER_CONF_STAGE2_R2.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_OTHER_SEL_HP.getNumByte() + MeterConfigV108Enum.METER_CONF_OTHER_SEL_PAD_BP.getNumByte() + MeterConfigV108Enum.METER_CONF_PTRIG_LEV.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_PTRIG_LEV_LOW.getNumByte() + MeterConfigV108Enum.METER_CONF_PTRIG_LEV_HIGH.getNumByte() + MeterConfigV108Enum.METER_CONF_PCONFIG.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_PCONFIG0.getNumByte() + MeterConfigV108Enum.METER_CONF_PCONFIG1.getNumByte() + MeterConfigV108Enum.METER_CONF_PCONFIG2.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_PCONFIG3.getNumByte() + MeterConfigV108Enum.METER_CONF_EXC_LEN.getNumByte() + MeterConfigV108Enum.METER_CONF_EXC_CONFIG_SEL_N70.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_MSEQ_LEVEL.getNumByte() + MeterConfigV108Enum.METER_CONF_MSEQ_ENABLE.getNumByte() + MeterConfigV108Enum.METER_CONF_PULSE_K.getNumByte()
+		// + MeterConfigV108Enum.METER_CONF_RESOLUTION.getNumByte();
+	}
+}

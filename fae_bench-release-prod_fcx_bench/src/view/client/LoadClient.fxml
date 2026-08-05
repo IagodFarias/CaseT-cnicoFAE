@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.*?>
+<?import eu.hansolo.medusa.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="646.0" prefWidth="1168.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.client.LoadClientControllerView">
+   <children>
+      <BorderPane layoutX="102.0" prefHeight="390.0" prefWidth="564.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <bottom>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+              <items>
+                  <Button fx:id="btnCancel" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onActionCancelButton" prefHeight="20.0" prefWidth="80.0" text="Fechar" textAlignment="CENTER" />
+                  <Button fx:id="btnNovo" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onActionNewButton" prefHeight="20.0" prefWidth="80.0" text="Novo" textAlignment="CENTER" />
+              </items>
+            </ToolBar>
+         </bottom>
+         <center>
+            <TableView id="batchTable" fx:id="clientTable" onMouseClicked="#onTableMouseClicked" prefHeight="200.0" prefWidth="200.0" styleClass="table-column-style" stylesheets="@../css/generalStyleSheet.css" tableMenuButtonVisible="true" BorderPane.alignment="CENTER">
+              <columns>
+                <TableColumn fx:id="columnFantasyName" prefWidth="100.0" text="Client" />
+                <TableColumn fx:id="columnSocialName" prefWidth="200.0" text="Razão Social" />
+                  <TableColumn fx:id="columnStateRegistration" prefWidth="100.0" text="Insc. Estadual" />
+                  <TableColumn fx:id="columnCNPJ" prefWidth="100.0" text="CNPJ" />
+                  <TableColumn fx:id="columnAddress" prefWidth="100.0" text="Lograd." />
+                  <TableColumn fx:id="columnCEP" prefWidth="100.0" text="CEP" />
+                  <TableColumn fx:id="columnBusinessContact" prefWidth="100.0" text="Contato" />
+                  <TableColumn fx:id="columnEmail" prefWidth="100.0" text="Email" />
+                  <TableColumn fx:id="columnTel" prefWidth="100.0" text="Tel." />
+                  <TableColumn fx:id="columnCel" prefWidth="100.0" text="Cel." />
+              </columns>
+            </TableView>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

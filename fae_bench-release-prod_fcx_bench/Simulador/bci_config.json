@@ -1,0 +1,75 @@
+{
+  "_comment": "Configuracao do simulador da BCI. Veja Simulador/README_BCI.md.",
+
+  "host": "127.0.0.1",
+  "port": 8888,
+
+  "log_dir": "logs_simulador",
+  "log_level": "INFO",
+
+  "bench": {
+    "_comment": "Estado fisico inicial e valores de sensor em repouso.",
+    "line_state": "CLOSED",
+    "temp_upstream_c": 20.0,
+    "temp_downstream_c": 20.0,
+    "temp_reserv_inf_c": 20.0,
+    "temp_reserv_sup_c": 20.0,
+    "temp_scale_c": 20.0,
+    "temp_amb_c": 22.0,
+    "press_upstream_bar": 1.20,
+    "press_downstream_bar": 1.10,
+    "press_dif_bar": 0.10,
+    "press_barometric_bar": 0.92,
+    "humidity_pct": 55.0,
+    "scale_weight_kg": 0.0,
+
+    "_noise_comment": "Ruido relativo aplicado a cada leitura. assertStaticZeroFlow compara a pressao diferencial contra +/-3% do primeiro valor lido; manter press_dif_noise bem abaixo de 0.03.",
+    "temp_noise": 0.002,
+    "press_dif_noise": 0.004,
+    "press_noise": 0.005,
+    "flow_noise": 0.004,
+
+    "_refmeter_comment": "Devem casar com refmetermodel em testdb/seed_test_db.sql. O simulador deriva o peso do pulso com a MESMA formula da aplicacao (RefMeterController.calcFreqPulseWeight): mL_por_pulso = (max_flow_lph / 3.6) / freq_max_hz. Se estes valores divergirem do banco, a vazao de referencia calculada pela app nao bate com a real e as constantes K saem erradas.",
+    "refmeters": {
+      "HSCFTA": { "max_flow_lph": 20000.0, "freq_max_hz": 1000.0 },
+      "HSCFTM": { "max_flow_lph": 1200.0,  "freq_max_hz": 1000.0 },
+      "HSCFTB": { "max_flow_lph": 120.0,   "freq_max_hz": 1000.0 }
+    }
+  },
+
+  "fault_injection": {
+    "_comment": "DESLIGADO por padrao. enabled=false ignora todas as regras abaixo.",
+    "enabled": false,
+    "rules": [
+      {
+        "_comment": "Exemplo: responder NACK ao terceiro closeLine.",
+        "command": "closeLine",
+        "action": "nack",
+        "occurrences": [3],
+        "enabled": false
+      },
+      {
+        "_comment": "Exemplo: atrasar 12 s a leitura do medidor de referencia (soTimeout da app e 10 s).",
+        "command": "readRefMeter",
+        "action": "delay",
+        "delay_seconds": 12.0,
+        "every_n": 50,
+        "enabled": false
+      },
+      {
+        "_comment": "Exemplo: nunca responder a getSensorTemp (silencio total).",
+        "command": "getSensorTemp",
+        "action": "silence",
+        "occurrences": [7],
+        "enabled": false
+      },
+      {
+        "_comment": "Exemplo: devolver JSON malformado.",
+        "command": "getCounter",
+        "action": "garbage",
+        "every_n": 100,
+        "enabled": false
+      }
+    ]
+  }
+}

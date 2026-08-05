@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.*?>
+<?import eu.hansolo.medusa.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.PasswordField?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+
+<AnchorPane layoutX="10.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="background-transparent" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.configDataBase.ConfigDataBase">
+   <children>
+      <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="400.0" >
+         <center>
+            <VBox spacing="10.0" BorderPane.alignment="CENTER">
+               <children>
+                  <HBox />
+                  <VBox spacing="20.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="20.0">
+                           <children>
+                              <Label text="URL:" />
+                              <JFXTextField fx:id="tfUrlDataBase" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox >
+                        	<children>
+                        	 <Label text="Usuário:" />
+                             <JFXTextField fx:id="tfUserDataBase" HBox.hgrow="ALWAYS" /> 
+                        	</children>
+                        </HBox>
+                        <HBox >
+                        	<children>
+                        	<Label text="Senha:" />
+                              <JFXTextField fx:id="tfPasswordDataBase" HBox.hgrow="ALWAYS" />                           
+                        	</children>
+                        </HBox>
+                        <HBox alignment="BASELINE_RIGHT">
+                        	<children>
+ 	                              <JFXButton fx:id="btConfigDataBase"  buttonType="RAISED" onAction="#onConfigDataBase" prefHeight="30.0" prefWidth="100.0" styleClass="bordered-titled-title" stylesheets="@../css/generalStyleSheet.css" text="Salvar e conectar" />
+                        	</children>
+                        </HBox>
+                        <HBox>
+                        	<children>
+ 	                              <Label fx:id="lbStatusDataBase"  text="Status da Conexão " textFill="RED"/>
+                        	</children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <BorderPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </BorderPane.margin>
+            </VBox>
+         </center>
+         <top>
+            <HBox alignment="CENTER_RIGHT" styleClass="background-color-fae" stylesheets="@../css/generalStyleSheet.css" BorderPane.alignment="CENTER_LEFT">
+               <children>
+                  <HBox HBox.hgrow="ALWAYS">
+                     <children>
+                        <HBox>
+                           <children>
+                              <Label text="Credenciais do banco de dados" HBox.hgrow="ALWAYS">
+                                 <font>
+                                    <Font name="System Bold Italic" size="12.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="30.0" />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                           <children>
+                              <JFXButton fx:id="btClose" onAction="#onClose" prefHeight="20.0" prefWidth="60.0" styleClass="bordered-button-close" stylesheets="@../css/generalStyleSheet.css" text="X">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </JFXButton>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+               </padding>
+            </HBox>
+         </top>
+         <left>
+            <VBox prefWidth="30.0" styleClass="background-color-fae" stylesheets="@../css/generalStyleSheet.css" BorderPane.alignment="CENTER" />
+         </left>
+      </BorderPane>
+   </children>
+   <padding>
+      <Insets left="10.0" top="10.0" />
+   </padding>
+</AnchorPane>

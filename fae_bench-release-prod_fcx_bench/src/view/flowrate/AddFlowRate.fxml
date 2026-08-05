@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.*?>
+<?import eu.hansolo.medusa.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<!-- <AnchorPane prefHeight="646.0" prefWidth="1168.0" -->
+<!-- xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" -->
+<!-- fx:controller="view.flowrate.LoadFlowRateControllerView"> -->
+<!-- <children> -->
+<!-- </children> -->
+<!-- </AnchorPane> -->
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.flowrate.AddFlowRateControllerView">
+	<!-- <center> -->
+	<!-- <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER"> -->
+	<!-- <columns> -->
+	<!-- <TableColumn prefWidth="75.0" text="C1" /> -->
+	<!-- <TableColumn prefWidth="75.0" text="C2" /> -->
+	<!-- </columns> -->
+	<!-- </TableView> -->
+	<!-- </center> -->
+	<bottom>
+		<ToolBar prefHeight="40.0" prefWidth="200.0">
+			<items>
+				<Button fx:id="btnCancel" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onActionCancel" prefHeight="20.0" prefWidth="80.0" text="Fechar" textAlignment="CENTER" />
+			</items>
+		</ToolBar>
+	</bottom>
+	<center>
+		<TableView id="batchTable" fx:id="flowRateTable" onMouseClicked="#onTableMouseClicked" prefHeight="200.0" prefWidth="200.0" styleClass="table-column-style" stylesheets="@../css/generalStyleSheet.css" tableMenuButtonVisible="true" BorderPane.alignment="CENTER">
+			<columns>
+				<TableColumn fx:id="columnFlowRate" prefWidth="100.0" text="Vazão" />
+				<TableColumn fx:id="columnDescription" prefWidth="450.0" text="Descriçao" />
+				<TableColumn fx:id="columnUpperLimit" prefWidth="100.0" text="Limite Sup." />
+				<TableColumn fx:id="columnLowerLimit" prefWidth="100.0" text="Limite Inf." />
+				<TableColumn fx:id="columnRamal" prefWidth="100.0" text="Ramal" />
+				<TableColumn fx:id="columnRefMeter" prefWidth="100.0" text="Med. referencia" />
+				<TableColumn fx:id="columnPump" prefWidth="100.0" text="Bomba" />
+			</columns>
+		</TableView>
+	</center>
+
+</BorderPane>

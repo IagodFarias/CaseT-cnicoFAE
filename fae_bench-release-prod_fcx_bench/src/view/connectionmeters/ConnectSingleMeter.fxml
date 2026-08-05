@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.*?>
+<?import eu.hansolo.medusa.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="background-transparent" stylesheets="@../css/generalStyleSheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.connectionmeters.ConnectSingleMeter">
+   <children>
+      <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="dropshadow" stylesheets="@../css/generalStyleSheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <center>
+            <VBox minWidth="350.0" BorderPane.alignment="CENTER">
+               <children>
+                  <VBox spacing="10.0">
+                     <children>
+                        <HBox>
+                           <children>
+                              <Label fx:id="lbTitle" text="Posição XX">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <VBox>
+                           <children>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                 <children>
+                                    <Pane>
+                                       <children>
+                                          <ProgressIndicator fx:id="piProcessing" />
+                                          <ImageView fx:id="ivStatusImage" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
+                                       </children>
+                                    </Pane>
+                                    <Label fx:id="lbUserMsg" text="Conectando ao medidor" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+                  <HBox nodeOrientation="RIGHT_TO_LEFT" spacing="20.0">
+                     <children>
+                        <Button alignment="CENTER" contentDisplay="CENTER" minWidth="100.0" mnemonicParsing="false" onAction="#onOkButton" text="OK" textAlignment="CENTER" />
+                        <Button fx:id="tbCancel" alignment="CENTER" contentDisplay="CENTER" minWidth="100.0" mnemonicParsing="false" onAction="#onCancelButton" text="Cancelar" textAlignment="CENTER" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </HBox>
+               </children>
+            </VBox>
+         </center>
+         <left>
+            <Pane prefWidth="50.0" styleClass="background-color-fae" stylesheets="@../css/generalStyleSheet.css" BorderPane.alignment="CENTER" />
+         </left>
+         <top>
+            <Pane prefHeight="30.0" styleClass="background-color-fae" stylesheets="@../css/generalStyleSheet.css" BorderPane.alignment="CENTER" />
+         </top>
+      </BorderPane>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</AnchorPane>

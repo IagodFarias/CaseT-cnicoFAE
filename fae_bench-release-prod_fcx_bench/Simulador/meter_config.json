@@ -1,0 +1,103 @@
+{
+  "_comment": "Configuracao do simulador dos 20 medidores. Veja Simulador/README_MEDIDORES.md.",
+  "host": "127.0.0.1",
+  "base_port": 2051,
+  "meter_count": 20,
+  "log_dir": "logs_simulador",
+  "log_level": "INFO",
+  "stream": {
+    "_comment": "Taxa do stream do Formato 1. A app exige 45 amostras por ponto (numOfSamples em MeterSocketThread); a 10 Hz isso leva 4,5 s.",
+    "rate_hz": 10.0,
+    "_atomic": "Cada pacote de 86 bytes e escrito com um unico sendall(). Nunca parcial.",
+    "quiet_window_s": 0.0,
+    "_quiet_window": "MANTER EM 0. Pausar o stream trava a app: readDataLine() precisa de 8x0xFF para fechar um pacote e, sem stream, fica em laco ate o timeout de 2 s, sem nunca chegar a checkForAck().",
+    "ack_repeat_window_s": 86400,
+    "ack_repeat_interval_s": 0.25,
+    "_ack_repeat": "O ACK e reasseverado a cada ack_repeat_interval_s ate chegar um novo comando. Ajuda, mas NAO resolve o bug de readDataLine() descrito no README (limitacao conhecida): cada chamada cria um BufferedInputStream novo que le adiante e descarta o excedente, engolindo ACKs de comandos emitidos com o stream ligado."
+  },
+  "firmware": {
+    "_comment": "ViewStatesUtil.arrayMinVersion = {1,0,0,0,8,0,1,0}. A app compara fwVersionToLong(recebido) < fwVersionToLong(minima): se MENOR, ela espera o ECO byte a byte dos comandos de escrita; se MAIOR OU IGUAL, nao ha eco. Este simulador declara 1.0.8.2 (>= minima) e portanto NAO ecoa. Trocar para algo menor (ex.: [1,0,0,0,7,0,0,0]) exige ligar echo_writes.",
+    "version_bytes": [
+      1,
+      0,
+      0,
+      0,
+      8,
+      0,
+      2,
+      0
+    ],
+    "echo_writes": false
+  },
+  "physics": {
+    "_comment": "Modelo invertido a partir de CalibrationService. Com c = sosWater(T): ttstd = L/(c+v) + tau + delta ; ttrev = L/(c-v) + tau - delta. A app recupera dzc = -delta e dsos = tau na vazao zero, e depois mede v exatamente.",
+    "us_path_length_m": 0.084,
+    "reduction_diameter_m": 0.01,
+    "_deve_casar": "us_path_length_m e reduction_diameter_m TEM de ser iguais a metertypemodel do seed, senao K sai errado.",
+    "tau_s": 1e-06,
+    "delta_s": 1e-09,
+    "_tt_noise_s": "CRITICO. calculateStdDeviationZeroFlow reprova o medidor se 2*desvio(vel) >= 0.0015 m/s. Com L=0.084 e t~56.7 us, sigma_vel ~ 1.85e7 * sigma_t. Em 1e-11 s (10 ps) da 2*sigma ~ 3.7e-4, com folga de 4x. Acima de ~4e-11 comeca a reprovar.",
+    "tt_noise_s": 1e-11,
+    "temperature_c": 20.0,
+    "agc_status": 0,
+    "r1_gain": 120,
+    "gm1_gain": 80,
+    "hfc": 8000000.0
+  },
+  "defaults": {
+    "_comment": "Perfil aplicado a todo medidor sem entrada explicita em 'meters'.",
+    "bias_calib": 0.0,
+    "bias_verif": 0.0,
+    "enabled": true,
+    "_bias_calib": "Erro sistematico de velocidade durante a CALIBRACAO. K calculado pela app fica ~1/(1+bias_calib).",
+    "_bias_verif": "Erro residual APOS a calibracao, aplicado na VERIFICACAO. Limites do seed: +/-5% em Q1/Q2, +/-2% em Q3/Q4. Use 0.10 para reprovar de proposito."
+  },
+  "meters": {
+    "_comment": "Sobrescreve 'defaults' por medidor (chave = numero de 1 a 20). Exemplo de medidor ruim comentado abaixo.",
+    "7": {
+      "bias_calib": 0.004,
+      "bias_verif": 0.006
+    },
+    "13": {
+      "bias_calib": -0.003,
+      "bias_verif": -0.005
+    }
+  },
+  "fault_injection": {
+    "_comment": "DESLIGADO por padrao. enabled=false ignora todas as regras.",
+    "enabled": false,
+    "rules": [
+      {
+        "_comment": "Exemplo: medidor 5 responde NACK ao trim AGC (0x23).",
+        "meter": 5,
+        "command": "0x23",
+        "action": "nack",
+        "occurrences": [
+          1
+        ],
+        "enabled": false
+      },
+      {
+        "_comment": "Exemplo: medidor 9 nao responde ao teste de conexao (0x10) -> nao conecta.",
+        "meter": 9,
+        "command": "0x10",
+        "action": "silence",
+        "enabled": false
+      },
+      {
+        "_comment": "Exemplo: medidor 3 corrompe 1 pacote a cada 200 -> REPROVA na coleta.",
+        "meter": 3,
+        "action": "corrupt_stream",
+        "every_n": 200,
+        "enabled": false
+      },
+      {
+        "_comment": "Exemplo: medidor 11 emite NaN em ttstd/ttrev/vel -> a app descarta o pacote.",
+        "meter": 11,
+        "action": "nan_stream",
+        "every_n": 300,
+        "enabled": false
+      }
+    ]
+  }
+}

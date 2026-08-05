@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.*?>
+<?import eu.hansolo.medusa.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.matfiledir.MatFileDirChooser">
+   <center>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <VBox alignment="CENTER" spacing="20.0" stylesheets="@../css/generalStyleSheet.css">
+               <children>
+                  <HBox alignment="CENTER_LEFT">
+                     <children>
+                        <Label fx:id="lbTitle" text="MatFile">
+                           <font>
+                              <Font name="System Bold Italic" size="12.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <VBox alignment="CENTER" spacing="10.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="lbContentText" minWidth="100.0" text="Diretório local:" wrapText="true" />
+                              <TextField fx:id="tfLocalPath" minWidth="300.0" />
+                              <Button minWidth="50.0" mnemonicParsing="false" onAction="#onChooseLocalPath" text=". . ." />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Label fx:id="lbContentText1" minWidth="100.0" text="Diretório remoto:" wrapText="true" />
+                              <TextField fx:id="tfRemotePath" minWidth="300.0" />
+                              <Button minWidth="50.0" mnemonicParsing="false" onAction="#onChooseRemotePath" text=". . ." />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+            <HBox nodeOrientation="RIGHT_TO_LEFT" spacing="20.0">
+               <children>
+                  <Button fx:id="btConfirm" minWidth="100.0" mnemonicParsing="false" onAction="#onConfirm" text="OK" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

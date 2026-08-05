@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process>
+	<purge>
+		<time>60</time>
+		<flow>3000</flow> 
+	</purge>
+	<flow>
+		<time>120</time>
+		<deviation>1.03</deviation>
+		<flowvalue>1000</flowvalue>
+		<flowvalue>1250</flowvalue>
+		<flowvalue>2500</flowvalue>
+		<flowvalue>2750</flowvalue>
+	</flow>
+		<samplingdiv>2</samplingdiv>
+</process>

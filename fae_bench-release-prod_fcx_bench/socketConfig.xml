@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<sockets>
+	<socket socketId="si">
+<!-- 		<ip>192.168.2.1</ip> -->
+<!-- 		<port>5001</port> -->
+		<ip>192.168.2.6</ip>
+		<port>8888</port>
+		<!-- <ip>200.150.131.18</ip> -->
+		<!-- <port>8888</port> -->
+		<!-- <ip>128.30.1.231</ip> -->
+		<!-- <port>8888</port> -->
+<!-- 		<ip>127.0.0.1</ip> -->
+<!-- 		<port>2514</port> -->
+		<!-- <ip>192.168.2.10</ip> -->
+		<!-- <port>8888</port> -->
+		<!-- SIMULADOR LOCAL (Simulador/run_all.py): comente o ip/port 192.168.2.6 acima e descomente estas 2 linhas -->
+		<!-- <ip>127.0.0.1</ip> -->
+		<!-- <port>8888</port> -->
+	</socket>
+	<socket socketId="CONVERSOR1">
+		<ip>192.168.254.100</ip>
+		<port>2051</port>
+	</socket>
+	<socket socketId="CONVERSORTESTE">
+		<ip>127.0.0.1</ip>
+		<port>2514</port>
+	</socket>
+</sockets>

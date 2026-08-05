@@ -1,0 +1,10 @@
+/*/*.class
+/*/*/*.class
+/*/*/*/*.class
+/.apt_generated/
+/bin/*
+*.log
+*.txt
+bin/*
+dist/*
+src/services/openJdk-25/*

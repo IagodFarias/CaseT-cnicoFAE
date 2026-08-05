@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane fx:id="root" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.client.NewClientControllerView">
+	<bottom>
+		<Pane prefHeight="60.0" prefWidth="700.0" BorderPane.alignment="CENTER">
+			<children>
+				<ToolBar layoutY="26.0" maxWidth="1.7976931348623157E308" prefWidth="700.0">
+					<items>
+						<Button fx:id="btnCancel" mnemonicParsing="false" onAction="#onActionCancelButton" prefWidth="80.0" text="Fechar" />
+						<Button fx:id="btnSalvar" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onActionSalvar" prefWidth="80.0" text="Salvar" />
+						<Label fx:id="labelRequiredFields" text="* Todos os campos são obrigatórios" textFill="RED">
+							<font>
+								<Font name="System Bold Italic" size="12.0" />
+							</font>
+							<opaqueInsets>
+								<Insets />
+							</opaqueInsets>
+							<padding>
+								<Insets left="30.0" />
+							</padding>
+						</Label>
+					</items>
+				</ToolBar>
+			</children>
+		</Pane>
+	</bottom>
+   <center>
+      <Pane BorderPane.alignment="CENTER">
+         <children>
+            <Pane layoutX="10.0" layoutY="10.0" prefHeight="550.0" prefWidth="680.0" styleClass="bordered-titled-border" stylesheets="@../css/generalStyleSheet.css">
+               <children>
+                  <Label layoutX="24.0" layoutY="22.0" text="Nome Fantasia *" />
+                  <TextField fx:id="textfieldFantasyName" layoutX="24.0" layoutY="40.0" prefHeight="25.0" prefWidth="400.0" />
+                  <Label layoutX="24.0" layoutY="78.0" text="Razão Social" />
+                  <TextField fx:id="textFieldSocialName" layoutX="24.0" layoutY="96.0" prefHeight="25.0" prefWidth="400.0" />
+                  <Label layoutX="24.0" layoutY="135.0" text="Inscrição Estadual *" />
+                  <TextField fx:id="textfieldStateRegistration" layoutX="24.0" layoutY="153.0" prefHeight="25.0" prefWidth="230.0" />
+                  <Label layoutX="24.0" layoutY="195.0" text="Endereço *" />
+                  <TextField fx:id="textfieldCnpj" layoutX="384.0" layoutY="153.0" prefHeight="25.0" prefWidth="230.0" />
+                  <Label layoutX="384.0" layoutY="135.0" text="CNPJ *" />
+                  <TextField fx:id="textfieldAddress" layoutX="24.0" layoutY="214.0" prefHeight="25.0" prefWidth="230.0" />
+                  <Label layoutX="384.0" layoutY="195.0" text="Bairro *" />
+                  <TextField fx:id="textfieldDistrict" layoutX="384.0" layoutY="214.0" prefHeight="25.0" prefWidth="230.0" />
+                  <Label layoutX="25.0" layoutY="253.0" text="Cidade *" />
+                  <TextField fx:id="textfieldCity" layoutX="25.0" layoutY="272.0" prefHeight="25.0" prefWidth="230.0" />
+                  <Label layoutX="384.0" layoutY="253.0" text="UF *" />
+                  <ComboBox fx:id="comboBoxUF" layoutX="384.0" layoutY="272.0" prefWidth="150.0" />
+                  <Label layoutX="24.0" layoutY="313.0" text="CEP" />
+                  <TextField fx:id="textfieldCep" layoutX="24.0" layoutY="332.0" prefHeight="25.0" prefWidth="230.0" />
+                  <Label layoutX="25.0" layoutY="372.0" text="Contato" />
+                  <TextField fx:id="textfieldBusinessContact" layoutX="25.0" layoutY="391.0" prefHeight="25.0" prefWidth="230.0" />
+                  <Label layoutX="384.0" layoutY="372.0" text="Email" />
+                  <TextField fx:id="textfieldEmail" layoutX="384.0" layoutY="391.0" prefHeight="25.0" prefWidth="230.0" />
+                  <Label layoutX="25.0" layoutY="432.0" text="Tel." />
+                  <TextField fx:id="textfieldTel" layoutX="25.0" layoutY="451.0" prefHeight="25.0" prefWidth="230.0" />
+                  <Label layoutX="384.0" layoutY="432.0" text="Cel." />
+                  <TextField fx:id="textfieldCel" layoutX="384.0" layoutY="451.0" prefHeight="25.0" prefWidth="230.0" />
+                  <Label layoutX="25.0" layoutY="524.0" text="( * ) Campos obrigatórios" />
+               </children>
+            </Pane>
+         </children>
+      </Pane>
+   </center>
+</BorderPane>

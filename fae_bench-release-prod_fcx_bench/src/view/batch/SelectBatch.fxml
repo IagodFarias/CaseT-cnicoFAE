@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.*?>
+<?import eu.hansolo.medusa.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="646.0" prefWidth="1168.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.batch.SelectBatchControllerView">
+   <children>
+      <BorderPane layoutX="102.0" prefHeight="390.0" prefWidth="564.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <bottom>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+              <items>
+                  <Button fx:id="btnCancel" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onActionCancelButton" prefHeight="20.0" prefWidth="80.0" text="Fechar" textAlignment="CENTER" />
+              </items>
+            </ToolBar>
+         </bottom>
+         <center>
+            <TableView id="batchTable" fx:id="batchTable" onMouseClicked="#onTableMouseClicked" prefHeight="200.0" prefWidth="200.0" styleClass="table-column-style" stylesheets="@../css/generalStyleSheet.css" tableMenuButtonVisible="true" BorderPane.alignment="CENTER">
+              <columns>
+                <TableColumn fx:id="columnLoteId" prefWidth="101.0" text="Numero do Lote" />
+                <TableColumn fx:id="columnQtdMeters" prefWidth="141.0" text="Qtd de medidores" />
+                  <TableColumn fx:id="columnClient" prefWidth="200.0" text="Cliente" />
+                  <TableColumn fx:id="columnRadioFreq" prefWidth="134.0" text="Rádio Frequência" />
+                  <TableColumn fx:id="columnManufacturerCode" prefWidth="134.0" text="Código do fabricante " />
+                  <TableColumn fx:id="columnLastAssignedSerialSeq" prefWidth="140.0" text="Última Sequência Produzido" />
+                  <TableColumn fx:id="columnMeterDesc" prefWidth="264.0" text="Descrição Medidor" />
+                  <TableColumn fx:id="columnLeftProduce" prefWidth="110.0" text="Restam Produzir" />
+              </columns>
+            </TableView>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

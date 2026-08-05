@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.control.*?>
+<?import eu.hansolo.medusa.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="root" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.metertype.LoadMeterTypeType">
+   <children>
+      <BorderPane layoutX="102.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <bottom>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+              <items>
+                  <Button fx:id="btAction" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onActionButton" prefWidth="200.0" text="Novo" textAlignment="CENTER" />
+              </items>
+               <BorderPane.margin>
+                  <Insets left="5.0" />
+               </BorderPane.margin>
+            </ToolBar>
+         </bottom>
+         <center>
+            <VBox BorderPane.alignment="CENTER">
+               <children>
+                  <HBox spacing="10.0">
+                     <children>
+                        <HBox styleClass="bordered-titled-border" stylesheets="@../css/generalStyleSheet.css">
+                           <children>
+                              <TableView fx:id="meterTypeTable" onMouseClicked="#onTableMouseClicked">
+                                <columns>
+                                    <TableColumn fx:id="columnSelect" prefWidth="50.0" text="Select" />
+                                  <TableColumn fx:id="columnDescription" prefWidth="500.0" text="Description" />
+                                    <TableColumn fx:id="columnDelete" prefWidth="75.0" text="Action" />
+                                </columns>
+                              </TableView>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </HBox>
+                        <HBox styleClass="bordered-titled-border" stylesheets="@../css/generalStyleSheet.css">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <VBox alignment="CENTER_LEFT" spacing="5.0">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Description" />
+                                          <TextField fx:id="tfDescription" editable="false" minWidth="600.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Metering class" />
+                                          <TextField fx:id="tfMeteringClass" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Manufacturer" />
+                                          <TextField fx:id="tfManufacturer" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Cod. product" />
+                                          <TextField fx:id="tfCodProduct" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Range" />
+                                          <TextField fx:id="tfRange" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Inmetro Qn Id" />
+                                          <TextField fx:id="tfInmetroQnId" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Carcass length" />
+                                          <TextField fx:id="tfCarcassLength" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Radio wM-Bus" />
+                                          <CheckBox fx:id="cbRadioWmBus" disable="true" mnemonicParsing="false" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Ultrasound path lengh" />
+                                          <TextField fx:id="tfUltraSoundPathLengh" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Nominal diameter" />
+                                          <TextField fx:id="tfNominalDiameter" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Reduction diameter" />
+                                          <TextField fx:id="tfReductionDiameter" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Low cutoff" />
+                                          <TextField fx:id="tfLowCutoff" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="High cutoff" />
+                                          <TextField fx:id="tfHighCutoff" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Min. flowrate permissible error" />
+                                          <TextField fx:id="tfMinFlowRatePermissibleError" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Nominal flowrate permissible error" />
+                                          <TextField fx:id="tfNominalFlowRatePermissibleError" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Max. flowrate permissible error" />
+                                          <TextField fx:id="tfMaxFlowRatePermissibleError" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label minWidth="200.0" text="Transition flowrate permissible error" />
+                                          <TextField fx:id="tfTransitionFlowRatePermissibleError" alignment="CENTER" editable="false" minWidth="200.0" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>

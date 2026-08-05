@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ServiceInterface" default="create-jar" basedir=".">
+    <description>
+        Build file for ServiceInterface application
+    </description>
+
+    <!-- Define properties -->
+    <property name="src.dir" location="src"/>
+    <property name="bin.dir" location="bin"/>
+    <property name="lib.dir" location="lib"/>
+    <property name="dist.dir" location="dist"/>
+    <property name="rsrc.dir" location="rsrc"/>
+    <property name="conf.dir" location="conf"/>
+    <property name="main.class" value="main.ServiceInterfaceMain"/>
+    <property name="jar.name" value="ServiceInterface.jar"/>
+    <property name="javafx.path" value="${lib.dir}/javafx-sdk-21.0.2/lib"/>
+
+    <!-- Define classpath -->
+    <path id="classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- JavaFX VM arguments -->
+    <property name="javafx.vm.args">--module-path "${javafx.path}" --add-modules javafx.controls,javafx.fxml,javafx.graphics,javafx.base --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.management/sun.management=ALL-UNNAMED --add-exports javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED --add-exports javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED --add-exports javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED --add-exports javafx.base/com.sun.javafx.event=ALL-UNNAMED</property>
+
+    <!-- Create necessary directories -->
+    <target name="init">
+        <mkdir dir="${bin.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <!-- Clean build directories -->
+    <target name="clean">
+        <delete dir="${bin.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- Compile the Java code -->
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${bin.dir}" includeantruntime="false" encoding="UTF-8">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
+    <!-- Create the JAR file -->
+    <target name="create-jar" depends="compile">
+        <!-- Create manifest file -->
+        <manifest file="${bin.dir}/MANIFEST.MF">
+            <attribute name="Main-Class" value="${main.class}"/>
+            <attribute name="Class-Path" value="."/>
+        </manifest>
+
+        <!-- Copy resources -->
+        <copy todir="${bin.dir}/rsrc">
+            <fileset dir="${rsrc.dir}"/>
+        </copy>
+        <copy todir="${bin.dir}/conf">
+            <fileset dir="${conf.dir}"/>
+        </copy>
+        <copy file="socketConfig.xml" todir="${bin.dir}"/>
+        <copy file="processConfig.xml" todir="${bin.dir}"/>
+        <copy file="protocolFields.properties" todir="${bin.dir}"/>
+        <copy file="devicesTagReference.properties" todir="${bin.dir}"/>
+
+        <!-- Create the JAR file -->
+        <jar destfile="${dist.dir}/${jar.name}" basedir="${bin.dir}" manifest="${bin.dir}/MANIFEST.MF">
+            <fileset dir="${bin.dir}"/>
+        </jar>
+    </target>
+
+    <!-- Create a fat JAR with all dependencies -->
+    <target name="create-fat-jar" depends="compile">
+        <!-- Create manifest file -->
+        <manifest file="${bin.dir}/MANIFEST.MF">
+            <attribute name="Main-Class" value="${main.class}"/>
+        </manifest>
+
+        <!-- Copy resources -->
+        <copy todir="${bin.dir}/rsrc">
+            <fileset dir="${rsrc.dir}"/>
+        </copy>
+        <copy todir="${bin.dir}/conf">
+            <fileset dir="${conf.dir}"/>
+        </copy>
+        <copy file="socketConfig.xml" todir="${bin.dir}"/>
+        <copy file="processConfig.xml" todir="${bin.dir}"/>
+        <copy file="protocolFields.properties" todir="${bin.dir}"/>
+        <copy file="devicesTagReference.properties" todir="${bin.dir}"/>
+
+        <!-- Create the fat JAR file excluding signature files -->
+        <jar destfile="${dist.dir}/${jar.name}" manifest="${bin.dir}/MANIFEST.MF">
+            <fileset dir="${bin.dir}"/>
+            
+            <!-- Include all dependency JARs -->
+            <zipgroupfileset dir="${lib.dir}" includes="**/*.jar"/>
+        </jar>
+        
+        <!-- Create a temp directory for JAR manipulation -->
+        <mkdir dir="${dist.dir}/temp"/>
+        
+        <!-- Unzip the JAR -->
+        <unzip src="${dist.dir}/${jar.name}" dest="${dist.dir}/temp"/>
+        
+        <!-- Delete signature files -->
+        <delete>
+            <fileset dir="${dist.dir}/temp/META-INF" includes="*.SF,*.RSA,*.DSA"/>
+        </delete>
+        
+        <!-- Create the JAR again without signatures -->
+        <jar destfile="${dist.dir}/${jar.name}.new" manifest="${bin.dir}/MANIFEST.MF">
+            <fileset dir="${dist.dir}/temp"/>
+        </jar>
+        
+        <!-- Replace the original JAR -->
+        <delete file="${dist.dir}/${jar.name}"/>
+        <move file="${dist.dir}/${jar.name}.new" tofile="${dist.dir}/${jar.name}"/>
+        
+        <!-- Clean up temp directory -->
+        <delete dir="${dist.dir}/temp"/>
+        
+        <!-- Copy configuration files to dist for runtime access -->
+        <copy file="socketConfig.xml" todir="${dist.dir}"/>
+        <copy file="processConfig.xml" todir="${dist.dir}"/>
+        <copy file="protocolFields.properties" todir="${dist.dir}"/>
+        <copy file="devicesTagReference.properties" todir="${dist.dir}"/>
+        <copy todir="${dist.dir}/rsrc">
+            <fileset dir="${rsrc.dir}"/>
+        </copy>
+        <copy todir="${dist.dir}/conf">
+            <fileset dir="${conf.dir}"/>
+        </copy>
+    </target>
+    
+    <!-- Build and run the application -->
+    <target name="run" depends="create-fat-jar">
+        <java jar="${dist.dir}/${jar.name}" fork="true">
+            <jvmarg line="${javafx.vm.args}"/>
+        </java>
+    </target>
+    
+    <!-- Create a batch file to run the application with proper JVM args -->
+    <target name="create-run-script" depends="create-fat-jar">
+        <echo file="${dist.dir}/run.bat">@echo off
+java ${javafx.vm.args} -jar ${jar.name}
+</echo>
+        <echo message="Run script created at ${dist.dir}/run.bat"/>
+    </target>
+</project> 

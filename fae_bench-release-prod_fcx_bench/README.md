@@ -53,6 +53,50 @@ Não é preciso criar tabelas: o Hibernate está com `hbm2ddl.auto=update`
 > [`src/main/ServiceInterfaceMain.java`](src/main/ServiceInterfaceMain.java) e
 > recompilar.
 
+### Como trocar de banco (edição manual + recompilação)
+
+Não há arquivo de configuração, variável de ambiente ou tela que altere a URL —
+a alteração é no código, na **linha 605** de `ServiceInterfaceMain.java`. Só uma
+das duas linhas pode ficar ativa (sem `//`):
+
+```java
+//   EMPRESA (ativo):
+urlDataBase = "127.0.0.1:5432/ufae_bench_prod";
+//
+//   TESTE local (simulador): comente a linha acima e descomente:
+// urlDataBase = "127.0.0.1:55432/ufae_bench_test";
+```
+
+Depois de editar, **recompile só esse arquivo** — não é preciso `ant`, nem
+`create-fat-jar`, nem recompilar o projeto todo (leva ~2 s):
+
+```powershell
+# PowerShell
+$CP = "bin;" + ((Get-ChildItem lib -Recurse -Filter *.jar | ForEach-Object { $_.FullName }) -join ";")
+javac -proc:none -nowarn -encoding ISO-8859-1 -cp $CP -d bin src\main\ServiceInterfaceMain.java
+```
+
+```bash
+# Git Bash
+CP="bin;$(find lib -name '*.jar' | tr '\n' ';')"
+javac -proc:none -nowarn -encoding ISO-8859-1 -cp "$CP" -d bin src/main/ServiceInterfaceMain.java
+```
+
+Saída vazia significa que compilou. Confira a data do `.class` e, ao iniciar,
+a linha do log que diz qual banco foi usado:
+
+```
+Conectando ao banco de dados. URL: 127.0.0.1:5432/ufae_bench_prod | usuario: postgres
+```
+
+> O comando acima atualiza **`bin/`**, não o `dist/ServiceInterface.jar`. Para o
+> `.jar` refletir a mudança é preciso gerá-lo de novo (seção 4).
+>
+> Depois de um teste em banco alternativo, **reverta a linha e recompile** — do
+> contrário a aplicação continua gravando fora da produção. Receita completa de
+> teste contra a bancada real com banco local:
+> [`testdb/GUIA_PRESENCIAL_BANCADA.md`](testdb/GUIA_PRESENCIAL_BANCADA.md).
+
 ---
 
 ## 3. Configuração de rede
